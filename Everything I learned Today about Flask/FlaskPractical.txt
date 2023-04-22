@@ -809,7 +809,7 @@ def login():
 ************************************************************************************************************************
 
 - now only thing that remains in our flaskblog.py is
-if __name__ == "__main__":
+ if __name__ == "__main__":
     app.run(debug=True)
 
 - now for make it run we can import app from flaskblog package
