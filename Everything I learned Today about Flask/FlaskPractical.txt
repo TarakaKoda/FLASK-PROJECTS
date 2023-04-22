@@ -822,3 +822,151 @@ if __name__ == "__main__":
 
 ************************************************************************************************************************
 
+- refactored all th project
+- create a new directory named flaskblog
+
+------------------------------------------------------------------------------------------------------------------------
+
+_ now create a python file __init__.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- move everything except run.py into that folder flaskblog.py
+
+- static: main.css
+- templates: about.html, home.html, layout.html, login.html, register.html.
+- __init__.py: mentioned above
+
+------------------------------------------------------------------------------------------------------------------------
+
+- forms.py
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.validators import DataRequired, Length, Email, equal_to
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), equal_to("password")])
+    submit = SubmitField("Sign Up")
+
+
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    remember = BooleanField("Remember Me")
+    submit = SubmitField("Login")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- models.py
+from datetime import datetime
+from flaskblog import db
+#
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    password = db.Column(db.String(60), nullable=False)
+    posts = db.relationship("Post", backref="author", lazy=True)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+from flask import render_template, url_for, flash, redirect
+from flaskblog import app
+from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.models import User, Post
+
+posts = [
+    {
+        "author": "Srinivasu Koda",
+        "title": "Blog Post 1",
+        "content": "This is my first post",
+        "date": "June 30, 2023",
+        "contact": 906910000
+    },
+    {
+        "author": "Naga Pavan",
+        "title": "Blog Post 2",
+        "content": "This is my second post",
+        "date": "July 23, 2023",
+        "contact": 9398809893
+    }
+]
+
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("home.html", posts=posts)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html", title="About")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f"Welcome to Thunder ⚡  {form.username.data}!  We're thrilled to have you join us!", "success")
+        return redirect(url_for("home"))
+    return render_template("register.html", title="Register", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == "nagapavan@gmail.com" and form.password.data == "password":
+            flash(f" I just sensed the weather is changing. Maybe the God Of Thunder ⚡ has arrived! Enjoy your stay.", "success")
+            return redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- instance: site.db
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-5: PACKAGE STRUCTURE*
+
+************************************************************************************************************************
+                                                                                                             23-04-2023
+                                              PART-6: USER LOGIN SYSTEM
+                                                                                                             10:00:40AM
+------------------------------------------------------------------------------------------------------------------------
