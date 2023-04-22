@@ -353,8 +353,23 @@
                                                                                                              09:00:40AM
 ------------------------------------------------------------------------------------------------------------------------
 
+> What is __init__py?
+  In Flask, __init__.py is a special Python file that serves as the entry point for a Flask application. When a Flask
+  application is created, Flask looks for the __init__.py file in the application's package directory and runs it to
+  initialize the application.
 
+  The __init__.py file typically contains the application factory function, which creates and configures the Flask
+  application object. This function is called by the Flask command line script or the WSGI server when the application
+  is run.
 
+  The __init__.py file can also be used to define Flask blueprints, which are modular components that can be registered
+  with the application to provide additional functionality. Additionally, it can be used to set up database connections,
+  configure logging, and define custom error handlers.
+
+  Overall, __init__.py is an important file in Flask applications as it defines the application's behavior and sets up
+  its environment.
+
+------------------------------------------------------------------------------------------------------------------------
 
 
 
