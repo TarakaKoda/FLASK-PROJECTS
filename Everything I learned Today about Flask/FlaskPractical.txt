@@ -317,10 +317,10 @@ from flask import Flask, render_template, url_for
 from forms import RegisterForm, LoginForm
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21e"      # You can generate secret key using secrets module
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"      # You can generate secret key using secrets module
                                                                   # import secrets
                                                                   # secrets.token_hex(16)
-                                                                  # 1de386d816c4c0484ffa4e3dc43f21ea"
+                                                                  # xxxx86d816c4c0484ffa4e3dc43fxxxx"
 
 posts = [
     {
@@ -412,7 +412,7 @@ if __name__ == "__main__":
 from flask import Flask, render_template, url_for, flash, redirect
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21e
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"
 
 posts = [
     {
@@ -748,7 +748,7 @@ from forms import RegistrationForm, LoginForm
 app = Flask(__name__)    # app is a WSGI application (Web Server Gateway Interface)
                          # __name__ is a name of the application’s module or package.
 
-app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"  # this is used for protection from the treats.
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
 db = SQLAlchemy(app)
 
@@ -834,7 +834,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
 # __name__ is a name of the application’s module or package.
 
-app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"  # this is used for protection from the treats.
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
 db = SQLAlchemy(app)
 
@@ -970,3 +970,376 @@ def login():
                                               PART-6: USER LOGIN SYSTEM
                                                                                                              10:00:40AM
 ------------------------------------------------------------------------------------------------------------------------
+
+- hashing passwords with bcrypt (flask-bcrypt)
+- pip install flask-bcrypt
+
+------------------------------------------------------------------------------------------------------------------------
+
+- in the command line
+- python
+
+>>> from flask_bcrypt import Bcrypt
+>>> bcrypt = Bcrypt()
+
+>>> bcrypt.generate_password_hash("testing")
+b'$2b$12$T8coNlH0nZHbwtRcnev5d./1rm/w.qPxFePlz/N7sj24zaNue7Pl.'  # b represents this is in bytes
+
+>>> bcrypt.generate_password_hash("testing").decode("utf-8")
+'$2b$12$vxP36uO9E6Z4abIjPeGb6O4ORPP4eW3mGXFo0f63e4fJxADmS5hdC'   # now the b has been removed
+
+------------------------------------------------------------------------------------------------------------------------
+
+- each time we run this we will get the different type of passwords.
+- if its different hash everytime how can we verify if it's our correct passwords.
+- inorder to do that we need another method called check_password_hash()
+
+>>> hashed_pw = bcrypt.generate_password_hash("testing").decode("utf-8")
+>>> bcrypt.check_password_hash(hashed_pw,"password")
+False
+>>> bcrypt.check_password_hash(hashed_pw,"testing")
+True
+>>> exit()
+- This is how we hash and verify our passwords
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we add this to our app initialization
+- __init__.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+
+- first we need to import it to our routes.py
+
+from flaskblog import db, bcrypt
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f"Your account has been created! You are now able to log in", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html", title="Register", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we can make sure that the user has been added to our database of not.
+- coming to the command line
+- python
+>>> from flaskblog import app, db
+>>> from flaskblog.models import User
+>>> app.app_context().push()
+>>> user = User.query.first()
+>>> user
+User('Srinivas', 'srinivas@gmail.com', 'default.jpg')
+>>> user.password
+'$2b$12$V0HN6spSvsFb.rShfROo9u9TvwiNP9iy3asMwaJG99OH0W53WndK6'
+>>> user.email
+srinivas@gmail.com
+>>> user.username
+Srinivas
+>>> exit()
+
+------------------------------------------------------------------------------------------------------------------------
+
+- if any error has thrown in the website then we can debug it with debug pin which will be given in the run.
+- now copy and paste it in the debugger on the site.
+- now we can run python code with in our browser to see the context of what the variables are at this point.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we have to validate if the username, email is already exits.
+- for that we can create two methods validate_username, validate_email in forms.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+- form.py
+
+from wtforms.validators import DataRequired, Length, Email, equal_to, ValidationError
+
+class RegistrationForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), equal_to("password")])
+    submit = SubmitField("Sign Up")
+
+    def validate_username(self, username):
+
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError("That username is taken. Please choose a different one.")
+
+    def validate_email(self, email):
+
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError("That email is taken. Please choose a different one.")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we have to create a login system for this we have to install flask extension called flask-login which will make
+  easy to manage login sessions.
+
+- pip install flask-login
+
+- now we add this extension to our __init__.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now the way this work is adding some additional functionalities to our database models and it will handle will the
+  sessions for us.
+
+- now open models.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+- models.py
+from datetime import datetime
+from flaskblog import db, login_manager
+from flask_login import UserMixin
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    password = db.Column(db.String(60), nullable=False)
+    posts = db.relationship("Post", backref="author", lazy=True)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now modify our login route
+
+- routes.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get("next")
+            return redirect(next_page) if next_page else redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- if a user is logged in then they shouldn't see the login and register links in the navigation bar now we have to fix it
+- we can use the current_user variable
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+
+from flask_login import login_user, current_user, logout_user
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f"Your account has been created! You are now able to log in", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html", title="Register", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- creating logout and account routes
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("home"))
+
+------------------------------------------------------------------------------------------------------------------------
+- we also want to see this in our navigation bar so we to add this to our layout template where navigation is created.
+
+<div class="navbar-nav">
+  {% if current_user.is_authenticated %}
+    <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('logout') }}">Logout</a>
+  {% else %}
+    <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('login') }}">Login</a>
+    <a class="nav-item nav-link border-color rounded text-dark " href="{{ url_for('register') }}">Register</a>
+  {% endif %}
+</div>
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we have to put some restrictions to certain pages so that if the user try to access some page which should be only
+  accessible only after login.
+
+- create account route
+@app.route("/account")
+def account():
+    return render_template("account.html", title="Account")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a account template in templates
+- account.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <h1>{{ current_user.username }}</h1>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now adding check to access the account page the user must log in.
+- to do this we can use login required decorator from flask-login extension.
+
+- routes.py
+
+from flask_login import login_user, current_user, logout_user, login_required
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template("account.html", title="Account")
+
+------------------------------------------------------------------------------------------------------------------------
+- now we need to till to that extension where our login routes are located.
+- to do this we need to go back to init.py
+
+- __init__.py
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+login_manager.login_message_category = 'warning'
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- when we tried to access to account page it redirected us to the login page, but after we login it first redirected us
+  to home page, and we had to access the account page from their, so it will noice if it redirects us to the page that
+  we tried to access before login.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+from flask import render_template, url_for, flash, redirect, request
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get("next")
+            return redirect(next_page) if next_page else redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", title="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-6: USER LOGIN SYSTEM*
+
+************************************************************************************************************************
+                                                                                                             24-04-2023
+                                      PART-7: User Account and Profile Picture
+                                                                                                             8:30:40AM
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
