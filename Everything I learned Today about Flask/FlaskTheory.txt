@@ -371,6 +371,124 @@
 
 ------------------------------------------------------------------------------------------------------------------------
 
+                                       *End of PART-5: PACKAGE STRUCTURE*
+
+************************************************************************************************************************
+                                                                                                             23-04-2023
+                                              PART-6: USER LOGIN SYSTEM
+                                                                                                             10:00:40AM
+------------------------------------------------------------------------------------------------------------------------
+
+> What is flask-bcrypt?
+  Flask-Bcrypt is a Flask extension that provides an easy way to generate and verify bcrypt hashes for passwords in your
+  Flask application. Bcrypt is a popular and secure password hashing algorithm that is resistant to brute-force attacks.
+
+  With Flask-Bcrypt, you can hash passwords using a simple API and store the hashed passwords in your database. When a
+  user logs in, you can verify their password by comparing the stored hash with the hash of the password they entered.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is check_password_hash()
+  check_password_hash is a method provided by the Flask-Bcrypt extension that allows you to verify whether a given
+  plaintext password matches a previously hashed password.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is debugger and debug pin?
+  In the context of microcontrollers and embedded systems, a debugger is a tool that allows developers to debug and test
+  their code by examining and manipulating the program running on the microcontroller in real-time. A debugger typically
+  provides features such as setting breakpoints, stepping through code, examining and modifying memory, and displaying
+  the values of variables and registers.
+
+  A debug pin is a hardware pin on a microcontroller that is used to signal the start or end of a debugging session.
+  Debug pins can be used to halt the execution of the program and transfer control to the debugger, or to indicate that
+  a debugging session has ended and the program should resume normal execution.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is ValidationError in wtforms?
+  In Flask-WTF, a ValidationError is raised when form validation fails. Flask-WTF provides several validation functions
+  that can be used to validate form data, such as DataRequired, Email, Length, and EqualTo.
+
+  When form validation fails, Flask-WTF raises a ValidationError with a message that describes the error. The message
+  can be accessed through the form.errors dictionary, which contains a mapping of field names to error messages.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is flask-login extension?
+  Flask-Login is a popular Flask extension that provides user authentication management for Flask applications. It
+  provides a simple way to handle user authentication, login, and logout functionality.
+
+  With Flask-Login, you can easily add user authentication to your Flask application by implementing the required methods
+  and properties in your user model, and using the provided decorators and functions to manage user sessions.
+
+  Some of the key features of Flask-Login include:
+
+  Session management: Flask-Login provides a user session management system that makes it easy to manage user sessions
+  and keep track of user activity.
+
+  User authentication: Flask-Login provides a simple and secure way to authenticate users by handling password hashing,
+  cookie management, and session management.
+
+  User management: Flask-Login provides a flexible user management system that allows you to customize the way users are
+  managed, including password management, account locking, and account deletion.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is LoginManager?
+  LoginManager is a class provided by Flask-Login that you can use to manage user authentication and user sessions in
+  your Flask application.
+
+  To use LoginManager in your Flask application, you first need to create an instance of the class and initialize it
+  with your Flask application.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is current_user variable?
+  In Flask, the current_user variable is a special proxy object provided by the Flask-Login extension that represents
+  the currently authenticated user in the current request context.
+
+  When a user logs into your Flask application using Flask-Login, the extension sets the current_user variable to the
+  authenticated user object. This allows you to access the user object and its attributes from anywhere in your
+  application during the request/response cycle.
+
+  For example, if you have a user model that contains a name attribute, you can access the currently authenticated
+  user's name using current_user.name.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is @login_required?
+  @login_required is a decorator provided by Flask-Login that you can use to protect a Flask route or view function, so
+  that only authenticated users are allowed to access it.
+
+  When you add the @login_required decorator to a route, Flask-Login will automatically check if the user is
+  authenticated. If the user is not authenticated, Flask-Login will redirect the user to the login page specified by the
+  login_view parameter in your Flask application's configuration.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is request in flask?
+  In Flask, request is a global variable that represents the current HTTP request. It is an instance of the Request
+  class provided by Werkzeug, which is a utility library used by Flask.
+
+  The request object contains information about the current HTTP request, such as the HTTP method (e.g. GET or POST),
+  the URL path, the query string parameters, the form data (if any), the HTTP headers, and more. You can use the request
+  object to access this information and use it to generate a response or perform some other action.
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-6: USER LOGIN SYSTEM*
+
+************************************************************************************************************************
+                                                                                                             24-04-2023
+                                      PART-7: User Account and Profile Picture
+                                                                                                             8:30:40AM
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 
 
