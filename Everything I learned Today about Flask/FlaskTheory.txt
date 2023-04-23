@@ -422,7 +422,7 @@
   With Flask-Login, you can easily add user authentication to your Flask application by implementing the required methods
   and properties in your user model, and using the provided decorators and functions to manage user sessions.
 
-  Some of the key features of Flask-Login include:
+  Some key features of Flask-Login include:
 
   Session management: Flask-Login provides a user session management system that makes it easy to manage user sessions
   and keep track of user activity.
@@ -432,6 +432,20 @@
 
   User management: Flask-Login provides a flexible user management system that allows you to customize the way users are
   managed, including password management, account locking, and account deletion.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is UserMixin?
+  UserMixin is a class provided by Flask-Login that provides default implementations for some of the methods required by
+  Flask-Login to work with user models.
+
+  In order to use Flask-Login in your Flask application, you need to provide a user model that represents the users of
+  your application. This user model should define certain methods, such as is_authenticated, is_active, is_anonymous,
+  and get_id. However, these methods can be repetitive and can take up a lot of space in your code.
+
+  To simplify the process of creating a user model for Flask-Login, you can use the UserMixin class. UserMixin provides
+  default implementations for the is_authenticated, is_active, and is_anonymous methods, so you only need to implement
+  the get_id method yourself.
 
 ------------------------------------------------------------------------------------------------------------------------
 
