@@ -550,8 +550,32 @@
                                     *End of PART-7: User Account and Profile Picture*
 
 ************************************************************************************************************************
+                                                                                                             24-04-2023
+                                     PART-8: Create, Update, and Delete Posts
+                                                                                                             07:25:50PM
+------------------------------------------------------------------------------------------------------------------------
 
+> What are route variables?
+  Route variables are placeholders used in web application frameworks to dynamically capture and extract specific values
+  from a URL path. They are typically used in the context of a web server or web application framework that maps
+  incoming HTTP requests to specific functions or controllers that handle those requests.
 
+------------------------------------------------------------------------------------------------------------------------
+
+> What is abort in flask?
+  In Flask, abort is a function that allows you to immediately stop the processing of a request and return an HTTP error
+  response to the client. It is typically used when an error condition is encountered during the processing of a request,
+  and you want to immediately return an error response to the client.
+
+  The abort function takes an HTTP status code as an argument, which is used to specify the type of error response to be
+  returned. For example, if you want to return a "Not Found" error (HTTP status code 404) when a requested resource is
+  not found
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-8: Create, Update, and Delete Posts*
+
+************************************************************************************************************************
 
 
 
