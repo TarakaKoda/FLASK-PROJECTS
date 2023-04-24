@@ -1340,6 +1340,296 @@ def login():
                                                                                                              8:30:40AM
 ------------------------------------------------------------------------------------------------------------------------
 
+- creating account template
+- account.html
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="userimage.jpg">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a directory named profile pics, and download default profile pic send it to this directory.
+- now add this directory to static directory in our project where "main.css" file present.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now update the hard coded image to our account template.
+- first we need to set it iin our routes and pass it to the account template.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+@app.route("/account")
+@login_required
+def account():
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- account.html
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we need to account form page
+- forms.py
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    submit = SubmitField("Update")
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError("That username is taken. Please choose a different one.")
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError("That email is taken. Please choose a different one.")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+
+@app.route("/account")
+@login_required
+def account():
+    form = UpdateAccountForm()
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now grab the registrations template and use them to create account template.
+- account.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Account Info</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>passwordconfirm_password
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- when we open the account page we want to auto fill the username and email.
+
+- routes.py
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash(f"Your account has been updated!", "success")
+        return redirect(url_for("account"))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now setting up changing the user profile picture.
+- to do that we need to add new field to our form that is input type of file.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- forms.py
+
+from flask_wtf.file import FileField, FileAllowed
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    picture = FileField("Update Profile Picture", validators=[FileAllowed(["jpg", "png"])])
+    submit = SubmitField("Update")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we updated our form and now we need to render template
+- account.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Account Info</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors%}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                 <div class="form-group">
+                    {{ form.picture.label() }}
+                    {{ form.picture(class="form-control-file") }}
+                    {% if form.picture.errors %}
+                        {% for error in form.picture.errors%}
+                                <span class="text-danger">{{ error }}</span></br>
+                        {% endfor %}
+                    {%  endif %}
+                 </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now lets add logic to our route to actually update our profile picture
+- routes.py
+
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash(f"Your account has been updated!", "success")
+        return redirect(url_for("account"))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- image resizing
+- pip install Pillow
+- routes.py
+
+from PIL import Image
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-7: User Account and Profile Picture*
+
+************************************************************************************************************************
+
+
 
 
 
