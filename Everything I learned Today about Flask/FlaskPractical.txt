@@ -1628,8 +1628,354 @@ def save_picture(form_picture):
                                     *End of PART-7: User Account and Profile Picture*
 
 ************************************************************************************************************************
+                                                                                                             24-04-2023
+                                     PART-8: Create, Update, and Delete Posts
+                                                                                                             07:25:50PM
+------------------------------------------------------------------------------------------------------------------------
 
+- create route for new post
 
+@app.route("/post/new", methods=["GET", "POST"])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash("Your post has been created!", "success")
+        return redirect(url_for("home"))
+    return render_template("create_post.html", title="New Post", form=form, legent="New Post")
 
+------------------------------------------------------------------------------------------------------------------------
+- create post form
+- forms.py
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = TextAreaField("Content", validators=[DataRequired()])
+    submit = SubmitField("Post")
 
+------------------------------------------------------------------------------------------------------------------------
+- add posts to home route
+- routes.py
+
+@app.route("/")
+@app.route("/home")
+def home():
+    posts = Post.query.all()
+    return render_template("home.html", posts=posts)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create post template
+- create_post.html
+{% extends "layout.html" %}
+{% block content %}
+        <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">{{ legend }}</legend>
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>title
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now update the layout.html
+- layout.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
+    <style>
+        body {
+            background-image: url('https://lh3.googleusercontent.com/_-m3Du9hfX4mVjtSQit18Rh_JHc-wxsptvm3HW0IqmdvqvnK1p5qlrDXGDezDje0_8oMsKbp-4Age3tw-EyI8SqDE9DPM0-9yPvvxI0TC_Pl4qVmmzfuCm2oehQG6cuSeFQrKRyTTqi9qc-sFdKb3b6vSxgqX8EgpLALrrCmnX-qazpePoEd9nr7QfmHnwJNPl3tWzk3Wga-UNAJa78OrTPQVlPAqMdLNMGVUD39rYkYh67x9RTHD-mp-lCk1HvjauQqc_0AMaIx-t7DuqA5Y6Tl0uKEtwny3qrlba7hDTa0MlRyuUsioBnpAAJJV8z-7XEb5JNmE09OA989gtP8t9250VWAHxoHdkB1EXuFQLn_7c6B3YvK4EoZ78lbxHgPHu115QDmscg70yjw-8bBNwOEZtgAcsyr1sUTdVNJI_1Aa_pMt0raqrzu-rStcHwlKCieGt8P8No3r8zpyXCUG2peEVHr8Y5NAAGMSxTe0VMxDYXSohd05a-Ms3qQbDuFpp0lXWPOjL6JUdvbyGETEXmxwvliIdR1elg28OvtEo5ep4-AZK_nmvjCOiISEON9uQvIlKNIpokOBGEo4lCGergGN2MtTCyDrz7YY9hytSprn5Q428fSnFk98grofHXeEupn-K4ezwZJohaqv_mXzKr4S39huFd3MqjQYuvxBPsw4ta8aAeEmRQ2--Vo3UcOrPpYtjWihK6TlcnEW1xMu1IweOdxBSpFDF8-CKAyKAGPd2mNvuvCy2tOY9cO52sGRq1wXhbyyGbEoDWcYxDQB50x_HwRC7VS8Si8PWXxCCialRhiMjj6_9S2ZC36pY9JDKH7Wjic-T9T2st0AimFPwEgfCgtcyGabkiJ63ofZyFrQwBYRH4YE5QEHxE3qA4uHtoFITxKsr5JEY4fQL6eQ2wdafHI32pJeAM2=w1689-h950-s-no?authuser=0');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+    {% if title %}
+        <title>Flask Blog - {{title}}</title>
+    {% else %}
+        <title>Flask Blog</title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-warning fixed-top">
+      <img src="https://lh3.googleusercontent.com/vi7J1cWPPRrVgJWCwhZCSAXsEkjZWPr_p0uuEAANlOZkADW8zckaJ3ZMqBg_Df9-kFsbXCulUPEzCcuILsr4DqdNL1qhWxdpa_SVkxP0X6gcYiVoHdFO-zISLDEfpGGKY2F_qV5-HYpTd5toRM563i1ZIBpTR1Z1ZsQYkI3hmgwUWXxS8YdjZY5-svRih5FY5g_ljymczJn9r7flTf0Ok15zeHNI-yFYUyVL8NIND-WmyVAJHLw5v3CP2EidENIIfxeUolOz9qCvxnv0XSVCwmJd4lFmQJQsAZkem-s5sqQ416Z6lzR6vpx6SNvlMgHmOqjPimDnhWs_TLm34NfxIbh9NENQkXAzM_0W7xAc-SghtZ-k7SvT8Tq4I2VcSy83VDHRpTS5ZHVQvh5dQ_-tkCkohMN_-hded2DBRhZCmQkHRtGwjJJiTRLPnU1yFMnrGkS1PadMbie8NgFHONYmMdrQU5XFuQHWWJQyjrMoHy5T7yyLMIaim66J2Xlwj19VH081goEF4bVPjKHydQ4WZtSs376hSKe1uA0xIe_IPbMElG_R5JNVVXj6gYJO37xongJHDfBMn6rVCDGkO8qhhH7b3oWjj3vlmRgD8bQaDHToGlcsywQuxr_16T5oY1DKhAAjr1DbEINUvX1fY07UCAJ4JC3OPwt_mdV6uQJGHDYeIvlLBh0yw18uxnzDxXZt84Vf7XgjV5nuPfN37Qi6CD_ecXmLD09YLbtDbfJ8qfW4R4ghWkMb7LwzNDV_ZllDULuTBAt_9hVtOa8JuQ5PqJ3p5RPuNdr4-53u-b0cKRnttRtViltxfeDqnAqFh-BNZB9434hn8ltskDyllt5NPRim4AUv5yKAi9Zhxsy5qybq3G-cDGInbJTV1vTDxjRvndP_hFhCplX5xjNeOagkNPCmzneYbDuHijKk=w489-h511-s-no?authuser=0" alt="Capsule Logo" class="logo" style="margin-left: 20px;">
+        <div class="container">
+           <a class="navbar-brand text-dark mr-5" href="/">
+               Thunder&nbsp;<span>&#9889;</span>&nbsp;Blog
+           </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item1 nav-link rounded text-dark mr-3" href="{{ url_for('home') }}">Home</a>
+              <a class="nav-item1 nav-link rounded text-dark" href="{{ url_for('about') }}">About</a>
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if current_user.is_authenticated %}
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('new_post') }}">New Post</a>
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('account') }}">Account</a>
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('logout') }}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('login') }}">Login</a>
+                <a class="nav-item nav-link border-color rounded text-dark " href="{{ url_for('register') }}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {%  for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Our Sidebar</h3>
+            <p class='text-muted'>You can put any information here you'd like.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Latest Posts</li>
+                <li class="list-group-item list-group-item-light">Announcements</li>
+                <li class="list-group-item list-group-item-light">Calendars</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
+
+------------------------------------------------------------------------------------------------------------------------
+
+- home.html
+{% extends "layout.html" %}
+{% block content %}
+    {% for post in posts %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create post route
+- routes.py
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template("post.html", title=post.title, post=post)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- post template
+- post.html
+
+extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ post.author.username }}</a>
+        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        {% if post.author == current_user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ post.title }}</h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+  </article>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a updatepost route
+- routes.py
+
+@app.route("/post/<int:post_id>/update", methods=["GET", "POST"])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash("Your post has been updated!", "success")
+        return redirect(url_for("post", post_id=post.id))
+    elif request.method == "GET":
+        form.title.data = post.title
+        form.content.data = post.content
+    return render_template("create_post.html", title="Update Post", form=form, legent="Update Post")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- createpost template
+- create_post.html
+{% extends "layout.html" %}
+{% block content %}
+        <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">{{ legend }}</legend>
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>title
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+- update post template with update and delete button
+
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ post.author.username }}</a>
+        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        {% if post.author == current_user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ post.title }}</h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+  </article>
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-8: Create, Update, and Delete Posts*
+
+************************************************************************************************************************
 
