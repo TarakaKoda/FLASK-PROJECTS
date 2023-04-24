@@ -499,8 +499,57 @@
                                                                                                              8:30:40AM
 ------------------------------------------------------------------------------------------------------------------------
 
+> What is FileField, FileAllowed?
+  Flask-WTF is a Flask extension that provides integration with the WTForms library, which is a flexible forms
+  validation and rendering library for Python.
 
+  FileField is a field class provided by WTForms that allows you to include a file input field in a form. When a form
+  containing a FileField is submitted, the file that was selected in the input field will be uploaded to the server.
 
+  FileAllowed is a validator provided by Flask-WTF that you can use to check if the uploaded file has a valid extension.
+  For example, if you only want to allow users to upload image files, you can use the FileAllowed validator to ensure
+  that the uploaded file has a .jpg, .jpeg, .png, or other valid image extension. If the uploaded file does not have a
+  valid extension, the validator will raise a validation error and prevent the form from being submitted.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is Pillow?
+  Pillow is a popular Python library for working with images. It provides a set of tools for opening, manipulating, and
+  saving image files in various formats. Pillow is a fork of the Python Imaging Library (PIL), which was discontinued
+  in 2011.
+
+  With Pillow, you can perform a variety of operations on images, such as resizing, cropping, rotating, flipping, and
+  applying various filters. You can also work with individual pixels, modify color channels, and convert images between
+  different color spaces.
+
+  Pillow supports a wide range of image formats, including JPEG, PNG, GIF, BMP, TIFF, and WebP, among others. It can
+  also read and write metadata in popular formats such as Exif, IPTC, and XMP.
+
+  Pillow is widely used in various applications, such as web development, scientific computing, image processing, and
+  machine learning. It is available under the open-source PIL Software License, which allows both personal and
+  commercial use.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is Image in PIL?
+  In PIL (Python Imaging Library) and its fork Pillow, an Image is a core class that represents a digital image. It
+  provides a set of methods for opening, manipulating, and saving image files.
+
+  An Image object can be created in various ways, such as by opening an image file from the file system, creating a new
+  blank image, or by copying an existing image. Once you have an Image object, you can perform a variety of operations
+  on it, such as resizing, cropping, rotating, and filtering.
+
+  The Image class provides methods for getting and setting pixel values, manipulating color channels, and converting
+  between different color spaces. You can also overlay images, create thumbnails, and composite multiple images.
+
+  In addition to the basic image manipulation operations, PIL and Pillow provide a wide range of image processing and
+  enhancement features, such as edge detection, blurring, sharpening, and histogram equalization.
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-7: User Account and Profile Picture*
+
+************************************************************************************************************************
 
 
 
