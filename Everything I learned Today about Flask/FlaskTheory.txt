@@ -576,8 +576,38 @@
                                     *End of PART-8: Create, Update, and Delete Posts*
 
 ************************************************************************************************************************
+                                                                                                             25-04-2023
+                                            PART-9: Pagination
+                                                                                                             12:15:00AM
+------------------------------------------------------------------------------------------------------------------------
 
+> What is pagination?
+  Pagination is a technique used to divide a large amount of data into smaller, more manageable sections or pages.
+  In Flask, pagination is often used in web applications that display a large number of items, such as blog posts,
+  comments, or products.
 
+  There are several pagination libraries available for Flask, such as Flask-Paginate and Flask-SQLAlchemy-pagination.
+  These libraries provide functions and utilities to help with the pagination process, such as calculating the number of
+  pages required, retrieving a specific page of data, and generating pagination links or buttons.
 
+------------------------------------------------------------------------------------------------------------------------
 
+> what is paginate() method in sqlalchemy?
+  SQLAlchemy provides a built-in paginate() method that can be used to paginate query results. This method is commonly
+  used in web applications to display large data sets, such as search results or blog posts, in smaller chunks or pages
 
+------------------------------------------------------------------------------------------------------------------------
+
+> What is request.args?
+  In Flask, request.args is a dictionary-like object that contains the parsed contents of the query string in the URL of
+  an HTTP GET request.
+
+  The request.args.get() method is a convenient way to retrieve a specific value from the request.args dictionary. It
+  takes two arguments: the first is the name of the parameter to retrieve, and the second is a default value to return
+  if the parameter is not present in the query string.
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-9: Pagination*
+
+************************************************************************************************************************
