@@ -618,3 +618,29 @@ A blueprint is essentially a Python object that defines a collection of routes a
 application instance to make those routes and views available. Blueprints can also define their own templates, static files, and other resources.
 
 Using blueprints, you can break down a large Flask application into smaller, more manageable modules that can be developed and maintained separately. For example, you might create a blueprint for handling user authentication and another blueprint for handling API requests.
+
+------------------------------------------------------------------------------------------------------------------------
+
+Blueprint: A Blueprint object is a way to organize related application routes and views into modular components.
+
+Blueprint constructor: The Blueprint class is used to create a new Blueprint object. The constructor takes two arguments:
+the name of the blueprint and the name of the module or package where the blueprint is defined.
+
+Blueprint registration: A blueprint needs to be registered with the Flask application instance in order to make its
+routes and views available. This is done using the register_blueprint() method of the Flask application instance.
+
+Route: A route is a URL pattern that maps to a view function. In Flask, routes are defined using the route() decorator.
+
+View function: A view function is a Python function that handles an HTTP request and returns an HTTP response. In Flask,
+view functions are typically decorated with the route() decorator to map them to specific URLs.
+
+URL prefix: A URL prefix is a string that is added to the beginning of all URLs defined in a blueprint. This can be
+useful for grouping related routes under a common URL prefix.
+
+Static files: A blueprint can define its own static files by placing them in a subdirectory named static within the
+blueprint package.
+
+Templates: A blueprint can define its own Jinja2 templates by placing them in a subdirectory named templates within the
+blueprint package.
+
+------------------------------------------------------------------------------------------------------------------------
