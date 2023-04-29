@@ -2369,3 +2369,6 @@ from auth import auth_bp
 app = Flask(__name__)
 app.register_blueprint(auth_bp)
 
+Here, we are registering the auth_bp blueprint with the app Flask instance. This will make the routes defined in the
+blueprint available at the URLs /auth/login and /auth/logout
+
