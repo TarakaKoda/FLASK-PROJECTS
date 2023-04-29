@@ -2363,3 +2363,9 @@ In this example, we are creating a blueprint called auth_bp and defining two rou
 requests. The first argument to the Blueprint constructor is the name of the blueprint, and the second argument is the
 name of the module (in this case, __name__).
 
+from flask import Flask
+from auth import auth_bp
+
+app = Flask(__name__)
+app.register_blueprint(auth_bp)
+
