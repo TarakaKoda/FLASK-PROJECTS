@@ -612,8 +612,9 @@
 
 ************************************************************************************************************************
 > What is Blueprint in flask?
-In Flask, a blueprint is a way to organize related application routes and views into modular components.
+  In Flask, a blueprint is a way to organize related application routes and views into modular components.
 
-A blueprint is essentially a Python object that defines a collection of routes and views, and can be registered with an application instance to make those routes and views available. Blueprints can also define their own templates, static files, and other resources.
+A blueprint is essentially a Python object that defines a collection of routes and views, and can be registered with an
+application instance to make those routes and views available. Blueprints can also define their own templates, static files, and other resources.
 
 Using blueprints, you can break down a large Flask application into smaller, more manageable modules that can be developed and maintained separately. For example, you might create a blueprint for handling user authentication and another blueprint for handling API requests.
