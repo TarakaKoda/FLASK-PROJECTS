@@ -664,4 +664,4 @@ Decorators: Blueprints can be decorated with Flask's before_request() and after_
 behavior to all routes defined in the blueprint.
 
 Blueprint prefix: A blueprint can specify a prefix that is added to all routes defined in the blueprint. This can be
-useful for creating sub-applications that are mounted at a specific URLpath.
+useful for creating sub-applications that are mounted at a specific URL path.
