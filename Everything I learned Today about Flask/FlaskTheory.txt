@@ -651,12 +651,17 @@ blueprint package.
 URL generation: Flask provides a url_for() function that generates URLs for a given view function. When using blueprints,
 the function takes the name of the blueprint and the name of the view function as arguments.
 
-Template context: A blueprint can define a function that adds context variables to all of its templates. This can be useful for providing data that is common to all routes defined in the blueprint.
+Template context: A blueprint can define a function that adds context variables to all of its templates. This can be
+useful for providing data that is common to all routes defined in the blueprint.
 
-Subdomain: A blueprint can define a subdomain that is used to match the host name of incoming requests. This can be useful for creating separate subdomains for different parts of an application.
+Subdomain: A blueprint can define a subdomain that is used to match the host name of incoming requests. This can be
+useful for creating separate subdomains for different parts of an application.
 
-Error handling: A blueprint can define its own error handlers for specific HTTP error codes, such as 404 (not found) or 500 (internal server error).
+Error handling: A blueprint can define its own error handlers for specific HTTP error codes, such as 404 (not found) or
+500 (internal server error).
 
-Decorators: Blueprints can be decorated with Flask's before_request() and after_request() decorators to add additional behavior to all routes defined in the blueprint.
+Decorators: Blueprints can be decorated with Flask's before_request() and after_request() decorators to add additional
+behavior to all routes defined in the blueprint.
 
-Blueprint prefix: A blueprint can specify a prefix that is added to all routes defined in the blueprint. This can be useful for creating sub-applications that are mounted at a specific URL path.
+Blueprint prefix: A blueprint can specify a prefix that is added to all routes defined in the blueprint. This can be
+useful for creating sub-applications that are mounted at a specific URL path.
