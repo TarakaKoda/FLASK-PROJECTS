@@ -2358,3 +2358,8 @@ def login():
 def logout():
     # Handle logout request
     pass
+
+In this example, we are creating a blueprint called auth_bp and defining two routes for handling login and logout
+requests. The first argument to the Blueprint constructor is the name of the blueprint, and the second argument is the
+name of the module (in this case, __name__).
+
