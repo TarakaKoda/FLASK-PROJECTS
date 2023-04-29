@@ -2340,3 +2340,21 @@ def user_posts(username):
                                     *End of PART-9: Pagination*
 
 ************************************************************************************************************************
+
+> Blueprint in flask
+To create a blueprint in Flask, you can use the Blueprint class, which is available in the flask module. Here's an
+example of how you might define a blueprint:
+
+from flask import Blueprint
+
+auth_bp = Blueprint('auth', __name__)
+
+@auth_bp.route('/login')
+def login():
+    # Handle login request
+    pass
+
+@auth_bp.route('/logout')
+def logout():
+    # Handle logout request
+    pass
