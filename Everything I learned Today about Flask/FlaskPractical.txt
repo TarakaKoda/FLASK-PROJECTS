@@ -1,0 +1,2374 @@
+                                                                                                             17-04-2023
+                                  FUll-FEATURED WEB APPLICATION USING FLASK
+                                                                                                             05:20:32PM
+
+************************************************************************************************************************
+
+                                             PART-1: GETTING STARTED
+* Getting Started with Flask:
+
+  - use terminal to install flask into python.
+> pip install flask
+
+  - To if its installed correctly.
+> python
+> import flask
+  - if this does not give any error then its installed correctly.
+> exit()
+
+************************************************************************************************************************
+
+> set up a virtual environment (optional)
+> now create a directory (e.g. Flask_Blog)
+> create a new file (e.g. flaskblog.py)
+
+************************************************************************************************************************
+
+Basic web applications:
+from flask import Flask
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>"
+
+> So what did that code do?
+
+1. First we imported the Flask class. An instance of this class will be our WSGI application.
+
+2. Next we create an instance of this class. The first argument is the name of the application’s module or package.
+   __name__ is a convenient shortcut for this that is appropriate for most cases. This is needed so that Flask knows
+   where to look for resources such as templates and static files.
+
+3. We then use the route() decorator to tell Flask what URL should trigger our function.
+
+4. The function returns the message we want to display in the user’s browser. The default content type is HTML,
+   so HTML in the string will be rendered by the browser.
+
+************************************************************************************************************************
+
+> Created Two new routes to your flask application:
+
+- The @app.route("/") decorator tells Flask to map the / or localhost URL to the home_page() function.
+  @app.route("/")
+  def home_page():
+      return f"<h1>Home Page</h1>" \
+             f"<h1>Welcome to our home page</h1>"
+
+- When a user navigates to http://localhost:5000/about, Flask will call the home_page() function and return the string
+  <h1>Home Page</h1> \ <h1>Welcome to our home page</h1> as the response.
+
+
+- The @app.route("/about") decorator tells Flask to map the /about URL to the about_page() function.
+  @app.route("/about")
+  def about_page():
+      return f"<h1>This is our about page</h1>"
+
+- When a user navigates to http://localhost:5000/about, Flask will call the about_page() function and return the string
+  <h1>This is our about page</h1> as the response.
+
+************************************************************************************************************************
+
+  if __name__ == "__main__":
+    app.run(debug=True)
+
+- This code block is commonly used in Flask applications to start the development server when the app.py file is run
+  directly from the command line.
+
+- The if __name__ == "__main__": statement is used to ensure that the code inside the block is only executed when the
+  script is run directly, and not when it is imported as a module.
+
+- The app.run(debug=True) method starts the Flask development server, with the debug mode enabled. The debug mode
+  automatically restarts the server whenever a code change is detected, making it easy to make changes and test the
+  application in a development environment.
+
+                                       *End of PART-1: GETTING STARTED*
+
+************************************************************************************************************************
+                                                                                                             18-04-2023
+                                           PART-2: TEMPLATES
+                                                                                                             02:00:19PM
+
+> How to use templates to return more complex code using html and css and how to pass variables to our web pages:
+
+> Create a templates directory in the main flask application and create templates:
+> home.html
+> about.html
+
+************************************************************************************************************************
+
+                                            BASIC HTML PAGES
+- home.html:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Blog</title>
+</head>
+<body>
+    <h1>Home Page</h1>
+</body>
+</html>
+
+************************************************************************************************************************
+
+- about.html:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Blog</title>
+</head>
+<body>
+    <h1>About Page</h1>
+</body>
+</html>
+
+************************************************************************************************************************
+
+- We can render templates using the flask butil-in method: render_template()
+from flask import Flask, render_template
+app = Flask(__name__)
+
+
+@app.route("/")
+@app.route("home")
+def home():
+    return render_template("home.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+************************************************************************************************************************
+
+> Adding variables or dummy data to our html files
+
+from flask import FLASK, rander_template
+app = FLASK(__name__)
+
+posts = [
+    {
+        "author": "Srinivas Koda",
+        "title": "Blog Post 1",
+        "content": "This is my First Post",
+        "date": "June 30, 2023",
+        "contact": "srinivaskoda@gmail.com"
+    },
+    {
+        "author": "Naga Pavan",
+        "title": "Blog Post 2"
+        "content": "This is my Second Post",
+        "date": "March 09, 2023",
+        "contact": "nagapavan@gmail.com"
+    }
+]
+
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return rander_template("home.html", posts=posts)
+
+
+@app.route("/about")
+def about():
+    return rander_template("about.html",title="About")
+
+************************************************************************************************************************
+
+- Using Jinja2 for looping the dummy data
+- home.html:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask Blog</title>
+</head>
+<body>
+    {% for post in posts %}
+        <h1>{{ post.title }}</h1>
+        <p>By {{ post.name }} on {{post.date}}</p>
+        <p>{{ post.content }}</p>
+        <p>For contact: {{ post.contact }}</p>
+    {% endfor %}
+</body>
+</html>
+
+************************************************************************************************************************
+
+- Using Jinja2 for if else conditions:
+- about.html:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+        <title>Flask Blog - {{ title }}</title>
+    {% else %}
+         <title>Flask Blog</title>
+    {% endif %}
+</head>
+<body>
+    <h1>About Page</h1>
+</body>
+</html>
+
+************************************************************************************************************************
+
+- Using the Concept of Template Inheritance to minimize the code:
+- create a new template in our templates directory called "layout.html"
+
+                                               PARENT TEMPLATE
+- layout.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+        <title>Flask Blog - {{ title }}</title>
+    {% else %}
+         <title>Flask Blog</title>
+    {% endif %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
+
+************************************************************************************************************************
+
+                                              CHILD TEMPLATES
+
+- home.html:
+
+  {% extends "layout.html" %}
+  {% block content %}
+        {% for post in posts %}
+            <h1>{{ post.title }}</h1>
+            <p>By {{ post.name }} on {{post.date}}</p>
+            <p>{{ post.content }}</p>
+            <p>For contact: {{ post.contact }}</p>
+        {% endfor %}
+  {% endblock content %}
+
+
+- about.html:
+
+  {% extends "layout.html" %}
+  {% block content %}
+      <h1>About Page</h1>
+  {% endblock content %}
+
+- For more information checkout the main and layout.html template where more html, css, javascript and bootstrap added.
+
+                                      *End of PART-2: TEMPLATES*
+
+************************************************************************************************************************
+                                                                                                             19-04-2023
+                                       PART-2: FORMS AND VALIDATIONS
+                                                                                                             10:35:30AM
+
+- installing wt forms extension
+  pip install flask-wtf
+  - This extension provides a simple way to define and validate forms
+
+- create a file in main directory as forms.py
+
+************************************************************************************************************************
+
+- forms.py
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.validators import DataRequired, Length, Email, equal_to
+
+
+class RegisterForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password",[DataRequired(), equal_to("password")])
+    submit = SubmitField("Sign up")
+
+
+class LoginFrom(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    remember = BooleanField("Remember Me")
+    submit = SubmitField("Login")
+
+************************************************************************************************************************
+
+- Added Secret Key to our flaskblog.py
+
+from flask import Flask, render_template, url_for
+from forms import RegisterForm, LoginForm
+app = Flask(__name__)
+
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"      # You can generate secret key using secrets module
+                                                                  # import secrets
+                                                                  # secrets.token_hex(16)
+                                                                  # xxxx86d816c4c0484ffa4e3dc43fxxxx"
+
+posts = [
+    {
+    "username": "Srinivas koda",
+    "title": "Blog Post 1"
+    "content": "This is my first post",
+    "contact": "srinivaskoda@gmail.com",
+    "date": "June 30, 2023"
+    },
+    {
+    "username": "Naga Pavan"
+    "title": "Blog Post 2",
+    "content": "This is my second post",
+    "contact": "nagapavan@gmail.com"
+    "date": "June 30, 2023"
+
+    }
+]
+
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("home.html", posts=posts)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html", title="About")
+
+- added register route and login route
+@app.route("/register")
+def register():
+    form = RegisterForm()
+    return = render_template("register.html", title="Register", form=form)
+
+@app.route("/login")
+def login():
+    form = LoginForm()
+    return render_template("login.html", title="Login", form=form)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+************************************************************************************************************************
+
+- register.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Join Our Community Of Thunderous Voices!</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {{ form.username(class="form-control form-control-lg") }}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {{ form.email(class="form-control form-control-lg") }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {{ form.password(class="form-control form-control-lg") }}
+                </div>
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="form-control-label") }}
+                    {{ form.confirm_password(class="form-control form-control-lg") }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Already Have an Account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
+        </small>
+    </div>
+{% endblock content %}
+
+************************************************************************************************************************
+- added flash message and redirect
+
+from flask import Flask, render_template, url_for, flash, redirect
+app = Flask(__name__)
+
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"
+
+posts = [
+    {
+    "username": "Srinivas koda",
+    "title": "Blog Post 1"
+    "content": "This is my first post",
+    "contact": "srinivaskoda@gmail.com",
+    "date": "June 30, 2023"
+    },
+    {
+    "username": "Naga Pavan"
+    "title": "Blog Post 2",
+    "content": "This is my second post",
+    "contact": "nagapavan@gmail.com"
+    "date": "June 30, 2023"
+
+    }
+]
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("home.html", title="Home", posts=posts)
+
+@app.route("/about")
+def about("/about"):
+    return render_template("about.html", title="About")
+
+
+- added flash message and redirect to home page
+app.route("/register")
+def register():
+    form = RegisterForm()
+    if form.validation_is_submit():
+        flash(f"Welcome to Thunber! {form.username.data} We're thrilled to have you join us!", "success")
+        return redirect(url_for("/home"))
+
+@app.route("/login")
+def login():
+    return redirect_template("login.html", title="login")
+
+if __name__ = "__main__":
+    app.run(debug=True)
+
+************************************************************************************************************************
+
+- adding flash message to layout template so that it can display to the user next after successfully logged in.
+
+{% with message = get_flashed_messages(with_categories=true) %}
+    {% if message %}
+        {% for category, message in message %}
+            <div class="alert alert-{{category}}>
+                {{ message }}
+            </div>
+        {% endfor%}
+    {% endif %}
+{% endwith%}
+
+- add this above to the {% block content %} in the layout.
+
+************************************************************************************************************************
+
+- giving error message feedback to the user if they enter wrong data
+ <div class="form-group">
+{{ form.username.label(class="form-control-label") }}
+{% if form.username.errors %}
+    {{ form.username(class="form-control form-control-lg is-invalid") }}
+    <div class="invalid-feedback">
+        {% for error in form.username.errors%}
+        <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+{% else %}
+    {{ form.username(class="form-control form-control-lg") }}
+{% endif%}
+</div>
+
+-this goes same to all the forms like login(email, password) and register(username, email, password, confirm_password) pages.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- login template
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Login!</legend>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>passwordconfirm_password
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-check">
+                    {{ form.remember(class="form-check-input") }}
+                    {{ form.remember.label(class="form-check-label") }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+            <small class="text-mute ml-2">
+                <a href="#">Forgot Password?</a>
+            </small>
+        </form>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Need an Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
+        </small>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+- checking fake login
+
+@app.route("/login")
+def login():
+    form = LoginForm()
+    if form.validation_is_submit():
+        if form.email.data == "nagapavan@gmail.com" and form.password.data == "password":
+            flash(f"Welcome to Thunder!", "success")
+            return redirect(url_for("/home"))
+        else:
+            flash(f"Thunder strikes! Login Unsuccessful. Please check Email and Password")
+    return render_template("login.html", title="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-3: FORMS AND VALIDATIONS*
+
+************************************************************************************************************************
+                                                                                                             21-04-2023
+                                       PART-4: DATABASE WITH FLASK-SQLAlchemy
+                                                                                                             09:35:30AM
+------------------------------------------------------------------------------------------------------------------------
+
+- installing SQLAlchemy
+> pip install flask-sqlalchemy
+
+------------------------------------------------------------------------------------------------------------------------
+from flask import Flask, render_template, flash, redirect
+from form import RegisterForm, LoginForm
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+
+app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite///site.db"
+
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), db.unique=True, db.nullable=False)
+    email = db.Column(db.String(120), db.unique=True, db.nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    password = db.Column(db.String(20), db.nullable=False)
+    posts = db.relationship("Post", backref="author", lazy=True)
+
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)  # it will automatically set the table
+                                                                                 name into lower so User to user and
+                                                                                 Post to post
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we can use these models User and Post to create database.
+
+> first you need to check if your in our project directory or not is not change it or else it won't work
+- command line
+
+>>> python
+>>> from flaskblog import db    # flaskblog is my application and db is the instance of the database i created.
+>>> db.create_all()
+
+- This may not work, i got stuck here. Thankfully i got yhe solution from someone in the comments named daniel <3
+
+- As of version SQLAlchemy 3.0 to create your db file you will need to run some commands like this in the shell :
+
+>>> from project import app, db
+>>> app.app_context().push()
+>>> db.create_all()
+
+- Then the .db file is created in a folder called "Instance" in your project.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- adding User and Post to our database.
+
+>>> from flaskblog import User, Post
+>>> user_1 = User(username="srinivas", email="srinivas@gmail.com", password="sunrisers")
+>>> user_2 = User(username= "pavan", email="pavan@gmail.com", password="password")
+
+- we didn't specify any id or an image file, since is our primary key it will assign a unique id, and we set a default
+  image file if we won't specify that it will take the "default.jpg".
+
+- now we can add the user_1, user_2 to our database.
+
+>>> db.session.add(user_1)
+>>> db.session.add(user_2)
+
+- now we can commit the changes all at once
+
+>>> db.session.commit()
+- now we committed they should have to be in the database.
+- now we can perform some common query
+
+>>> User.query.all()
+[User("srinivas", "srinivas@gmail.com", "default.jpg"), User("pavan", "pavan@gmail.com","default.jpg")]
+
+>>> User.query.first()
+User("srinivas", "srinivas@gmail.com", "default.jpg")
+
+>>> User.query.filter_by(username="srinivas").all()
+User("srinivas", "srinivas@gmail.com", "default.jpg")
+
+>>> User.query.filter_by(username="srinivas").first()
+User("srinivas", "srinivas@gmail.com", "default.jpg")
+
+>>> user = User.query.filter_by(username="srinivas").first()
+>>> user
+User("srinivas", "srinivas@gmail.com", "default.jpg")
+
+>>> user.id
+1
+>>> user = User.query.get(1)
+>>> user
+User("srinivas", "srinivas@gmail.com", "default.jpg")
+
+>>> user.posts
+[]
+>>>user.id
+1
+>>> post_1 = Post(title="Blog 1", content="First Post Content!", user_id=user.id)
+>>> post_2 = Post(title="Blog 2", content="Second Post Content!", user_id=user.id)
+
+>>> db.session.add(post_1)
+>>> db.session.add(post_2)
+>>> db.commit()
+
+>>>user.posts
+[Post('Blog1', '2023-04-21 12:49:06.421641'), Post('Blog2', '2023-04-21 12:49:06.421641')]
+>>> for post in posts:
+        print(post.title)
+
+Blog 1
+Blog 2
+
+>>> post = Post.query.first()
+>>>post
+
+Post('Blog1', '2023-04-21 12:49:06.421641')
+>>> post.user_id
+1
+>>> post.author
+>>> User('srinu', 'srinivas@gmail.com', 'default.jpg')
+
+>>> db.drop_all()
+>>> db.create_all()
+>>> User.query.all()
+[]
+>>> Post.query.all()
+[]
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-4: DATABASE with SQLAlchemy*
+
+************************************************************************************************************************
+                                                                                                             22-04-2023
+                                              PART-5: PACKAGE STRUCTURE
+                                                                                                             09:00:40AM
+------------------------------------------------------------------------------------------------------------------------
+
+- create a new fie called models in the main application.
+- models.py
+
+- now move the models User and Post from the flaskblog.py to models.py
+- now import db and datetime module.
+> from flaskblog import db
+> from datatime import datetime
+
+- now we restructure our project
+- first create a folder with same name as our main application
+- flaskblog
+- now move all the file into this file
+- folders = static, templates
+- files = forms.py, models.py
+
+************************************************************************************************************************
+
+- now create a new file __init__.py this will be our package
+- now move
+from flask import Flask, render_template, url_for, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
+from forms import RegistrationForm, LoginForm
+
+app = Flask(__name__)    # app is a WSGI application (Web Server Gateway Interface)
+                         # __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+
+************************************************************************************************************************
+
+- create a new file for routes.py for all th routes
+from models import User, Post
+
+posts = [
+    {
+        "author": "Srinivasu Koda",
+        "title": "Blog Post 1",
+        "content": "This is my first post",
+        "date": "June 30, 2023",
+        "contact": 906910000
+    },
+    {
+        "author": "Naga Pavan",
+        "title": "Blog Post 2",
+        "content": "This is my second post",
+        "date": "July 23, 2023",
+        "contact": 9398809893
+    }
+]
+
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("home.html", posts=posts)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html", title="About")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f"Welcome to Thunder ⚡  {form.username.data}!  We're thrilled to have you join us!", "success")
+        return redirect(url_for("home"))
+    return render_template("register.html", title="Register", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == "nagapavan@gmail.com" and form.password.data == "password":
+            flash(f" I just sensed the weather is changing. Maybe the God Of Thunder ⚡ has arrived! Enjoy your stay.", "success")
+            return redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+************************************************************************************************************************
+
+- now only thing that remains in our flaskblog.py is
+ if __name__ == "__main__":
+    app.run(debug=True)
+
+- now for make it run we can import app from flaskblog package
+from flaskblog import app
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+- now we can rename this as run.py so that we can avoid confusion
+
+************************************************************************************************************************
+
+- refactored all th project
+- create a new directory named flaskblog
+
+------------------------------------------------------------------------------------------------------------------------
+
+_ now create a python file __init__.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- move everything except run.py into that folder flaskblog.py
+
+- static: main.css
+- templates: about.html, home.html, layout.html, login.html, register.html.
+- __init__.py: mentioned above
+
+------------------------------------------------------------------------------------------------------------------------
+
+- forms.py
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.validators import DataRequired, Length, Email, equal_to
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), equal_to("password")])
+    submit = SubmitField("Sign Up")
+
+
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    remember = BooleanField("Remember Me")
+    submit = SubmitField("Login")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- models.py
+from datetime import datetime
+from flaskblog import db
+#
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    password = db.Column(db.String(60), nullable=False)
+    posts = db.relationship("Post", backref="author", lazy=True)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+from flask import render_template, url_for, flash, redirect
+from flaskblog import app
+from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.models import User, Post
+
+posts = [
+    {
+        "author": "Srinivasu Koda",
+        "title": "Blog Post 1",
+        "content": "This is my first post",
+        "date": "June 30, 2023",
+        "contact": 906910000
+    },
+    {
+        "author": "Naga Pavan",
+        "title": "Blog Post 2",
+        "content": "This is my second post",
+        "date": "July 23, 2023",
+        "contact": 9398809893
+    }
+]
+
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("home.html", posts=posts)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html", title="About")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f"Welcome to Thunder ⚡  {form.username.data}!  We're thrilled to have you join us!", "success")
+        return redirect(url_for("home"))
+    return render_template("register.html", title="Register", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == "nagapavan@gmail.com" and form.password.data == "password":
+            flash(f" I just sensed the weather is changing. Maybe the God Of Thunder ⚡ has arrived! Enjoy your stay.", "success")
+            return redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- instance: site.db
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-5: PACKAGE STRUCTURE*
+
+************************************************************************************************************************
+                                                                                                             23-04-2023
+                                              PART-6: USER LOGIN SYSTEM
+                                                                                                             10:00:40AM
+------------------------------------------------------------------------------------------------------------------------
+
+- hashing passwords with bcrypt (flask-bcrypt)
+- pip install flask-bcrypt
+
+------------------------------------------------------------------------------------------------------------------------
+
+- in the command line
+- python
+
+>>> from flask_bcrypt import Bcrypt
+>>> bcrypt = Bcrypt()
+
+>>> bcrypt.generate_password_hash("testing")
+b'$2b$12$T8coNlH0nZHbwtRcnev5d./1rm/w.qPxFePlz/N7sj24zaNue7Pl.'  # b represents this is in bytes
+
+>>> bcrypt.generate_password_hash("testing").decode("utf-8")
+'$2b$12$vxP36uO9E6Z4abIjPeGb6O4ORPP4eW3mGXFo0f63e4fJxADmS5hdC'   # now the b has been removed
+
+------------------------------------------------------------------------------------------------------------------------
+
+- each time we run this we will get the different type of passwords.
+- if its different hash everytime how can we verify if it's our correct passwords.
+- inorder to do that we need another method called check_password_hash()
+
+>>> hashed_pw = bcrypt.generate_password_hash("testing").decode("utf-8")
+>>> bcrypt.check_password_hash(hashed_pw,"password")
+False
+>>> bcrypt.check_password_hash(hashed_pw,"testing")
+True
+>>> exit()
+- This is how we hash and verify our passwords
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we add this to our app initialization
+- __init__.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "xxxx86d816c4c0484ffa4e3dc43fxxxx"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+
+- first we need to import it to our routes.py
+
+from flaskblog import db, bcrypt
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f"Your account has been created! You are now able to log in", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html", title="Register", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we can make sure that the user has been added to our database of not.
+- coming to the command line
+- python
+>>> from flaskblog import app, db
+>>> from flaskblog.models import User
+>>> app.app_context().push()
+>>> user = User.query.first()
+>>> user
+User('Srinivas', 'srinivas@gmail.com', 'default.jpg')
+>>> user.password
+'$2b$12$V0HN6spSvsFb.rShfROo9u9TvwiNP9iy3asMwaJG99OH0W53WndK6'
+>>> user.email
+srinivas@gmail.com
+>>> user.username
+Srinivas
+>>> exit()
+
+------------------------------------------------------------------------------------------------------------------------
+
+- if any error has thrown in the website then we can debug it with debug pin which will be given in the run.
+- now copy and paste it in the debugger on the site.
+- now we can run python code with in our browser to see the context of what the variables are at this point.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we have to validate if the username, email is already exits.
+- for that we can create two methods validate_username, validate_email in forms.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+- form.py
+
+from wtforms.validators import DataRequired, Length, Email, equal_to, ValidationError
+
+class RegistrationForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), equal_to("password")])
+    submit = SubmitField("Sign Up")
+
+    def validate_username(self, username):
+
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError("That username is taken. Please choose a different one.")
+
+    def validate_email(self, email):
+
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError("That email is taken. Please choose a different one.")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we have to create a login system for this we have to install flask extension called flask-login which will make
+  easy to manage login sessions.
+
+- pip install flask-login
+
+- now we add this extension to our __init__.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now the way this work is adding some additional functionalities to our database models and it will handle will the
+  sessions for us.
+
+- now open models.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+- models.py
+from datetime import datetime
+from flaskblog import db, login_manager
+from flask_login import UserMixin
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    password = db.Column(db.String(60), nullable=False)
+    posts = db.relationship("Post", backref="author", lazy=True)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now modify our login route
+
+- routes.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get("next")
+            return redirect(next_page) if next_page else redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- if a user is logged in then they shouldn't see the login and register links in the navigation bar now we have to fix it
+- we can use the current_user variable
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+
+from flask_login import login_user, current_user, logout_user
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f"Your account has been created! You are now able to log in", "success")
+        return redirect(url_for("login"))
+    return render_template("register.html", title="Register", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", tilte="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- creating logout and account routes
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("home"))
+
+------------------------------------------------------------------------------------------------------------------------
+- we also want to see this in our navigation bar so we to add this to our layout template where navigation is created.
+
+<div class="navbar-nav">
+  {% if current_user.is_authenticated %}
+    <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('logout') }}">Logout</a>
+  {% else %}
+    <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('login') }}">Login</a>
+    <a class="nav-item nav-link border-color rounded text-dark " href="{{ url_for('register') }}">Register</a>
+  {% endif %}
+</div>
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we have to put some restrictions to certain pages so that if the user try to access some page which should be only
+  accessible only after login.
+
+- create account route
+@app.route("/account")
+def account():
+    return render_template("account.html", title="Account")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a account template in templates
+- account.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <h1>{{ current_user.username }}</h1>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now adding check to access the account page the user must log in.
+- to do this we can use login required decorator from flask-login extension.
+
+- routes.py
+
+from flask_login import login_user, current_user, logout_user, login_required
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template("account.html", title="Account")
+
+------------------------------------------------------------------------------------------------------------------------
+- now we need to till to that extension where our login routes are located.
+- to do this we need to go back to init.py
+
+- __init__.py
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
+app = Flask(__name__)  # app is a WSGI application (Web Server Gateway Interface)
+# __name__ is a name of the application’s module or package.
+
+app.config["SECRET_KEY"] = "1de386d816c4c0484ffa4e3dc43f21ea"  # this is used for protection from the treats.
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+login_manager.login_message_category = 'warning'
+
+from flaskblog import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- when we tried to access to account page it redirected us to the login page, but after we login it first redirected us
+  to home page, and we had to access the account page from their, so it will noice if it redirects us to the page that
+  we tried to access before login.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+from flask import render_template, url_for, flash, redirect, request
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get("next")
+            return redirect(next_page) if next_page else redirect(url_for("home"))
+        else:
+            flash(f"⚠ Thunder Strikes! Login Unsuccessful. Please check Email and Password", "danger")
+    return render_template("login.html", title="Login", form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                       *End of PART-6: USER LOGIN SYSTEM*
+
+************************************************************************************************************************
+                                                                                                             24-04-2023
+                                      PART-7: User Account and Profile Picture
+                                                                                                             8:30:40AM
+------------------------------------------------------------------------------------------------------------------------
+
+- creating account template
+- account.html
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="userimage.jpg">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a directory named profile pics, and download default profile pic send it to this directory.
+- now add this directory to static directory in our project where "main.css" file present.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now update the hard coded image to our account template.
+- first we need to set it iin our routes and pass it to the account template.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+@app.route("/account")
+@login_required
+def account():
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- account.html
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we need to account form page
+- forms.py
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    submit = SubmitField("Update")
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError("That username is taken. Please choose a different one.")
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError("That email is taken. Please choose a different one.")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+
+@app.route("/account")
+@login_required
+def account():
+    form = UpdateAccountForm()
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now grab the registrations template and use them to create account template.
+- account.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Account Info</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>passwordconfirm_password
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- when we open the account page we want to auto fill the username and email.
+
+- routes.py
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash(f"Your account has been updated!", "success")
+        return redirect(url_for("account"))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now setting up changing the user profile picture.
+- to do that we need to add new field to our form that is input type of file.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- forms.py
+
+from flask_wtf.file import FileField, FileAllowed
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    picture = FileField("Update Profile Picture", validators=[FileAllowed(["jpg", "png"])])
+    submit = SubmitField("Update")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we updated our form and now we need to render template
+- account.html
+
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading">{{ current_user.username }}</h2>
+          <p class="text-secondary">{{ current_user.email }}</p>
+        </div>
+      </div>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Account Info</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors%}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                 <div class="form-group">
+                    {{ form.picture.label() }}
+                    {{ form.picture(class="form-control-file") }}
+                    {% if form.picture.errors %}
+                        {% for error in form.picture.errors%}
+                                <span class="text-danger">{{ error }}</span></br>
+                        {% endfor %}
+                    {%  endif %}
+                 </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now lets add logic to our route to actually update our profile picture
+- routes.py
+
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash(f"Your account has been updated!", "success")
+        return redirect(url_for("account"))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for("static", filename="profile_pics/" + current_user.image_file)
+    return render_template("account.html", title="Account", image_file=image_file, form=form)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- image resizing
+- pip install Pillow
+- routes.py
+
+from PIL import Image
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-7: User Account and Profile Picture*
+
+************************************************************************************************************************
+                                                                                                             24-04-2023
+                                     PART-8: Create, Update, and Delete Posts
+                                                                                                             07:25:50PM
+------------------------------------------------------------------------------------------------------------------------
+
+- create route for new post
+
+@app.route("/post/new", methods=["GET", "POST"])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash("Your post has been created!", "success")
+        return redirect(url_for("home"))
+    return render_template("create_post.html", title="New Post", form=form, legent="New Post")
+
+------------------------------------------------------------------------------------------------------------------------
+- create post form
+- forms.py
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    content = TextAreaField("Content", validators=[DataRequired()])
+    submit = SubmitField("Post")
+
+------------------------------------------------------------------------------------------------------------------------
+- add posts to home route
+- routes.py
+
+@app.route("/")
+@app.route("/home")
+def home():
+    posts = Post.query.all()
+    return render_template("home.html", posts=posts)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create post template
+- create_post.html
+{% extends "layout.html" %}
+{% block content %}
+        <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">{{ legend }}</legend>
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>title
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now update the layout.html
+- layout.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
+    <style>
+        body {
+            background-image: url('https://lh3.googleusercontent.com/_-m3Du9hfX4mVjtSQit18Rh_JHc-wxsptvm3HW0IqmdvqvnK1p5qlrDXGDezDje0_8oMsKbp-4Age3tw-EyI8SqDE9DPM0-9yPvvxI0TC_Pl4qVmmzfuCm2oehQG6cuSeFQrKRyTTqi9qc-sFdKb3b6vSxgqX8EgpLALrrCmnX-qazpePoEd9nr7QfmHnwJNPl3tWzk3Wga-UNAJa78OrTPQVlPAqMdLNMGVUD39rYkYh67x9RTHD-mp-lCk1HvjauQqc_0AMaIx-t7DuqA5Y6Tl0uKEtwny3qrlba7hDTa0MlRyuUsioBnpAAJJV8z-7XEb5JNmE09OA989gtP8t9250VWAHxoHdkB1EXuFQLn_7c6B3YvK4EoZ78lbxHgPHu115QDmscg70yjw-8bBNwOEZtgAcsyr1sUTdVNJI_1Aa_pMt0raqrzu-rStcHwlKCieGt8P8No3r8zpyXCUG2peEVHr8Y5NAAGMSxTe0VMxDYXSohd05a-Ms3qQbDuFpp0lXWPOjL6JUdvbyGETEXmxwvliIdR1elg28OvtEo5ep4-AZK_nmvjCOiISEON9uQvIlKNIpokOBGEo4lCGergGN2MtTCyDrz7YY9hytSprn5Q428fSnFk98grofHXeEupn-K4ezwZJohaqv_mXzKr4S39huFd3MqjQYuvxBPsw4ta8aAeEmRQ2--Vo3UcOrPpYtjWihK6TlcnEW1xMu1IweOdxBSpFDF8-CKAyKAGPd2mNvuvCy2tOY9cO52sGRq1wXhbyyGbEoDWcYxDQB50x_HwRC7VS8Si8PWXxCCialRhiMjj6_9S2ZC36pY9JDKH7Wjic-T9T2st0AimFPwEgfCgtcyGabkiJ63ofZyFrQwBYRH4YE5QEHxE3qA4uHtoFITxKsr5JEY4fQL6eQ2wdafHI32pJeAM2=w1689-h950-s-no?authuser=0');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+    {% if title %}
+        <title>Flask Blog - {{title}}</title>
+    {% else %}
+        <title>Flask Blog</title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-warning fixed-top">
+      <img src="https://lh3.googleusercontent.com/vi7J1cWPPRrVgJWCwhZCSAXsEkjZWPr_p0uuEAANlOZkADW8zckaJ3ZMqBg_Df9-kFsbXCulUPEzCcuILsr4DqdNL1qhWxdpa_SVkxP0X6gcYiVoHdFO-zISLDEfpGGKY2F_qV5-HYpTd5toRM563i1ZIBpTR1Z1ZsQYkI3hmgwUWXxS8YdjZY5-svRih5FY5g_ljymczJn9r7flTf0Ok15zeHNI-yFYUyVL8NIND-WmyVAJHLw5v3CP2EidENIIfxeUolOz9qCvxnv0XSVCwmJd4lFmQJQsAZkem-s5sqQ416Z6lzR6vpx6SNvlMgHmOqjPimDnhWs_TLm34NfxIbh9NENQkXAzM_0W7xAc-SghtZ-k7SvT8Tq4I2VcSy83VDHRpTS5ZHVQvh5dQ_-tkCkohMN_-hded2DBRhZCmQkHRtGwjJJiTRLPnU1yFMnrGkS1PadMbie8NgFHONYmMdrQU5XFuQHWWJQyjrMoHy5T7yyLMIaim66J2Xlwj19VH081goEF4bVPjKHydQ4WZtSs376hSKe1uA0xIe_IPbMElG_R5JNVVXj6gYJO37xongJHDfBMn6rVCDGkO8qhhH7b3oWjj3vlmRgD8bQaDHToGlcsywQuxr_16T5oY1DKhAAjr1DbEINUvX1fY07UCAJ4JC3OPwt_mdV6uQJGHDYeIvlLBh0yw18uxnzDxXZt84Vf7XgjV5nuPfN37Qi6CD_ecXmLD09YLbtDbfJ8qfW4R4ghWkMb7LwzNDV_ZllDULuTBAt_9hVtOa8JuQ5PqJ3p5RPuNdr4-53u-b0cKRnttRtViltxfeDqnAqFh-BNZB9434hn8ltskDyllt5NPRim4AUv5yKAi9Zhxsy5qybq3G-cDGInbJTV1vTDxjRvndP_hFhCplX5xjNeOagkNPCmzneYbDuHijKk=w489-h511-s-no?authuser=0" alt="Capsule Logo" class="logo" style="margin-left: 20px;">
+        <div class="container">
+           <a class="navbar-brand text-dark mr-5" href="/">
+               Thunder&nbsp;<span>&#9889;</span>&nbsp;Blog
+           </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item1 nav-link rounded text-dark mr-3" href="{{ url_for('home') }}">Home</a>
+              <a class="nav-item1 nav-link rounded text-dark" href="{{ url_for('about') }}">About</a>
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if current_user.is_authenticated %}
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('new_post') }}">New Post</a>
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('account') }}">Account</a>
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('logout') }}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('login') }}">Login</a>
+                <a class="nav-item nav-link border-color rounded text-dark " href="{{ url_for('register') }}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {%  for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Our Sidebar</h3>
+            <p class='text-muted'>You can put any information here you'd like.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Latest Posts</li>
+                <li class="list-group-item list-group-item-light">Announcements</li>
+                <li class="list-group-item list-group-item-light">Calendars</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
+
+------------------------------------------------------------------------------------------------------------------------
+
+- home.html
+{% extends "layout.html" %}
+{% block content %}
+    {% for post in posts %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create post route
+- routes.py
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template("post.html", title=post.title, post=post)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- post template
+- post.html
+
+extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ post.author.username }}</a>
+        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        {% if post.author == current_user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ post.title }}</h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+  </article>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a updatepost route
+- routes.py
+
+@app.route("/post/<int:post_id>/update", methods=["GET", "POST"])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash("Your post has been updated!", "success")
+        return redirect(url_for("post", post_id=post.id))
+    elif request.method == "GET":
+        form.title.data = post.title
+        form.content.data = post.content
+    return render_template("create_post.html", title="Update Post", form=form, legent="Update Post")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- createpost template
+- create_post.html
+{% extends "layout.html" %}
+{% block content %}
+        <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">{{ legend }}</legend>
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>title
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors%}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn border rounded btn-outline-warning") }}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+- update post template with update and delete button
+
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ post.author.username }}</a>
+        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        {% if post.author == current_user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ post.title }}</h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+  </article>
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-8: Create, Update, and Delete Posts*
+
+************************************************************************************************************************
+                                                                                                             25-04-2023
+                                            PART-9: Pagination
+                                                                                                             12:15:00AM
+------------------------------------------------------------------------------------------------------------------------
+
+- first we need to add enough posts to see pagination. (20 posts)
+- displaying all posts in a single page will make our application very slow.
+- if it could be better if we could paginate this in a multiple pages and we load them on a different pages and give
+  links to the different pages at the bottom of the page
+- flask sqlalchemy makes this easy for us with the paginate method.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- command line
+>>> from flaskblog import app, db
+>>> app.app_context().push()
+>>> posts = Post.query.all()
+>>> for post in posts:
+...     print(post)
+...
+Post('This My Third Post', '2023-04-24 16:06:05.761121')
+Post('This is my second post', '2023-04-25 08:16:08.990216')
+Post('Python Basics', '2023-04-25 08:18:20.373162')
+Post('Object-Oriented Programming in Python', '2023-04-25 08:19:07.167268')
+Post('Python Libraries', '2023-04-25 08:20:36.808323')
+Post('Web Scraping with Python', '2023-04-25 08:21:19.078843')
+Post('Data Analysis with Python', '2023-04-25 08:22:13.194432')
+Post('Machine Learning with Python', '2023-04-25 09:44:56.969920')
+Post('Natural Language Processing with Python', '2023-04-25 09:46:25.949512')
+Post('Web Development with Python', '2023-04-25 09:48:37.308765')
+Post('Image Processing with Python', '2023-04-25 09:49:49.657470')
+Post('Game Development with Python', '2023-04-25 09:50:22.449363')
+>>> posts = Post.query.paginate()
+>>> posts
+<flask_sqlalchemy.pagination.QueryPagination object at 0x000001D4421D9C90>
+>>> posts.per_page
+20
+>>> posts.page
+1
+>>> posts = Post.query.paginate(page=2)
+>>> for post in posts.items:
+...   print(post)
+...
+Post('this is my third page', '2023-04-25 11:03:00.754420')
+Post('ee sala cup namde', '2023-04-25 11:03:20.642648')
+Post('this is my 20th post', '2023-04-25 11:12:43.674190')
+Post('twenty first post', '2023-04-25 11:13:04.870133')
+>>> posts = Post.query.paginate(per_page=5)
+>>> posts.page
+1
+>>> for post in posts.items:
+...   print(post)
+...
+Post('This My Third Post', '2023-04-24 16:06:05.761121')
+Post('This is my second post', '2023-04-25 08:16:08.990216')
+Post('Python Basics', '2023-04-25 08:18:20.373162')
+Post('Object-Oriented Programming in Python', '2023-04-25 08:19:07.167268')
+Post('Python Libraries', '2023-04-25 08:20:36.808323')
+>>> posts = Post.query.paginate(per_page=5, page=2)
+>>> posts
+<flask_sqlalchemy.pagination.QueryPagination object at 0x000001D4421E4C10>
+>>> posts.page
+2
+>>> for post in posts.items:
+...   print(post)
+...
+Post('Web Scraping with Python', '2023-04-25 08:21:19.078843')
+Post('Data Analysis with Python', '2023-04-25 08:22:13.194432')
+Post('Machine Learning with Python', '2023-04-25 09:44:56.969920')
+Post('Natural Language Processing with Python', '2023-04-25 09:46:25.949512')
+Post('Web Development with Python', '2023-04-25 09:48:37.308765')
+>>> posts.total
+24
+>>> exit()
+>>> from flaskblog import app, db
+>>> app.app_context().push()
+>>> from flaskblog.models import Post
+>>> posts = Post.query.paginate(page=6, per_page=2)
+>>> for page in posts.iter_pages()
+>>> for page in posts.iter_pages():
+...     print(page)
+...
+1
+2
+None
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+@app.route("/")
+@app.route("/home")
+def home():
+    page = request.args.get("page", 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    return render_template("home.html", posts=posts)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- home.html
+{% extends "layout.html" %}
+{% block content %}
+    {% for post in posts.items %}
+        <article class="media content-section">
+        <img class="rounded-circle article-img" style="border: 2px solid black;" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+          {% if posts.page == page_num %}
+            <a class="btn btn-warning mb-4" href="{{ url_for('home', page=page_num)}}">{{ page_num }}</a>
+          {% else %}
+            <a class="btn btn-outline-warning mb-4" href="{{ url_for('home', page=page_num)}}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+post.html
+{% extends "layout.html" %}
+{% block content %}
+  <article class="media content-section">
+    <img class="rounded-circle article-img" style="border: 2px solid black;" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+        {% if post.author == current_user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ post.title }}</h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+  </article>
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+- user_post route
+@app.route("/user/<string:username>")
+def user_posts(username):
+    page = request.args.get("page", 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    return render_template("user_posts.html", posts=posts, user=user)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- user_post.html
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="mb-3" style="color: #ffc40c;">Posts by {{ user.username }} ({{ posts.total }})</h1>
+    {% for post in posts.items %}
+        <article class="media content-section">
+        <img class="rounded-circle article-img" style="border: 2px solid black;" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+          {% if posts.page == page_num %}
+            <a class="btn btn-warning mb-4" href="{{ url_for('user_posts', username=user.username, page=page_num)}}">{{ page_num }}</a>
+          {% else %}
+            <a class="btn btn-outline-warning mb-4" href="{{ url_for('user_posts', username=user.username, page=page_num)}}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- layout.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
+    <style>
+      body {
+        background-color: black;
+      }
+    </style>
+    <style>
+        body {
+            background-image: url('https://lh3.googleusercontent.com/_-m3Du9hfX4mVjtSQit18Rh_JHc-wxsptvm3HW0IqmdvqvnK1p5qlrDXGDezDje0_8oMsKbp-4Age3tw-EyI8SqDE9DPM0-9yPvvxI0TC_Pl4qVmmzfuCm2oehQG6cuSeFQrKRyTTqi9qc-sFdKb3b6vSxgqX8EgpLALrrCmnX-qazpePoEd9nr7QfmHnwJNPl3tWzk3Wga-UNAJa78OrTPQVlPAqMdLNMGVUD39rYkYh67x9RTHD-mp-lCk1HvjauQqc_0AMaIx-t7DuqA5Y6Tl0uKEtwny3qrlba7hDTa0MlRyuUsioBnpAAJJV8z-7XEb5JNmE09OA989gtP8t9250VWAHxoHdkB1EXuFQLn_7c6B3YvK4EoZ78lbxHgPHu115QDmscg70yjw-8bBNwOEZtgAcsyr1sUTdVNJI_1Aa_pMt0raqrzu-rStcHwlKCieGt8P8No3r8zpyXCUG2peEVHr8Y5NAAGMSxTe0VMxDYXSohd05a-Ms3qQbDuFpp0lXWPOjL6JUdvbyGETEXmxwvliIdR1elg28OvtEo5ep4-AZK_nmvjCOiISEON9uQvIlKNIpokOBGEo4lCGergGN2MtTCyDrz7YY9hytSprn5Q428fSnFk98grofHXeEupn-K4ezwZJohaqv_mXzKr4S39huFd3MqjQYuvxBPsw4ta8aAeEmRQ2--Vo3UcOrPpYtjWihK6TlcnEW1xMu1IweOdxBSpFDF8-CKAyKAGPd2mNvuvCy2tOY9cO52sGRq1wXhbyyGbEoDWcYxDQB50x_HwRC7VS8Si8PWXxCCialRhiMjj6_9S2ZC36pY9JDKH7Wjic-T9T2st0AimFPwEgfCgtcyGabkiJ63ofZyFrQwBYRH4YE5QEHxE3qA4uHtoFITxKsr5JEY4fQL6eQ2wdafHI32pJeAM2=w1689-h950-s-no?authuser=0');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+    <style>
+      ::-webkit-scrollbar {
+        width: 5px;
+        background-color: transparent
+      }
+      /* color of the scrollbar */
+      ::-webkit-scrollbar-thumb {
+        background-color: #ffc40c;
+        border-radius: 5px;
+      }
+
+      /* color of the scrollbar on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #fdff00;
+      }
+
+      /* background color of the track */
+      ::-webkit-scrollbar-track {
+        background-color: black;
+      }
+
+      /* color of the corner */
+      ::-webkit-scrollbar-corner {
+        background-color: black;
+      }
+
+      body {
+        scrollbar-width: thin;
+        scrollbar-color: #1DA1F2 #F5F8FA;
+      }
+    </style>
+
+
+
+    {% if title %}
+        <title>Flask Blog - {{title}}</title>
+    {% else %}
+        <title>Flask Blog</title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-warning fixed-top">
+      <img src="https://lh3.googleusercontent.com/vi7J1cWPPRrVgJWCwhZCSAXsEkjZWPr_p0uuEAANlOZkADW8zckaJ3ZMqBg_Df9-kFsbXCulUPEzCcuILsr4DqdNL1qhWxdpa_SVkxP0X6gcYiVoHdFO-zISLDEfpGGKY2F_qV5-HYpTd5toRM563i1ZIBpTR1Z1ZsQYkI3hmgwUWXxS8YdjZY5-svRih5FY5g_ljymczJn9r7flTf0Ok15zeHNI-yFYUyVL8NIND-WmyVAJHLw5v3CP2EidENIIfxeUolOz9qCvxnv0XSVCwmJd4lFmQJQsAZkem-s5sqQ416Z6lzR6vpx6SNvlMgHmOqjPimDnhWs_TLm34NfxIbh9NENQkXAzM_0W7xAc-SghtZ-k7SvT8Tq4I2VcSy83VDHRpTS5ZHVQvh5dQ_-tkCkohMN_-hded2DBRhZCmQkHRtGwjJJiTRLPnU1yFMnrGkS1PadMbie8NgFHONYmMdrQU5XFuQHWWJQyjrMoHy5T7yyLMIaim66J2Xlwj19VH081goEF4bVPjKHydQ4WZtSs376hSKe1uA0xIe_IPbMElG_R5JNVVXj6gYJO37xongJHDfBMn6rVCDGkO8qhhH7b3oWjj3vlmRgD8bQaDHToGlcsywQuxr_16T5oY1DKhAAjr1DbEINUvX1fY07UCAJ4JC3OPwt_mdV6uQJGHDYeIvlLBh0yw18uxnzDxXZt84Vf7XgjV5nuPfN37Qi6CD_ecXmLD09YLbtDbfJ8qfW4R4ghWkMb7LwzNDV_ZllDULuTBAt_9hVtOa8JuQ5PqJ3p5RPuNdr4-53u-b0cKRnttRtViltxfeDqnAqFh-BNZB9434hn8ltskDyllt5NPRim4AUv5yKAi9Zhxsy5qybq3G-cDGInbJTV1vTDxjRvndP_hFhCplX5xjNeOagkNPCmzneYbDuHijKk=w489-h511-s-no?authuser=0" alt="Capsule Logo" class="logo" style="margin-left: 20px;">
+        <div class="container">
+           <a class="navbar-brand text-dark mr-5" href="/">
+               Thunder&nbsp;<span>&#9889;</span>&nbsp;Blog
+           </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item1 nav-link rounded text-dark mr-3" href="{{ url_for('home') }}">Home</a>
+              <a class="nav-item1 nav-link rounded text-dark" href="{{ url_for('about') }}">About</a>
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if current_user.is_authenticated %}
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('new_post') }}">New Post</a>
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('account') }}">Account</a>
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('logout') }}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link border-color rounded text-dark mr-2" href="{{ url_for('login') }}">Login</a>
+                <a class="nav-item nav-link border-color rounded text-dark " href="{{ url_for('register') }}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {%  for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock content%}
+        </div>
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Our Sidebar</h3>
+            <p class='text-muted'>You can put any information here you'd like.
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Latest Posts</li>
+                <li class="list-group-item list-group-item-light">Announcements</li>
+                <li class="list-group-item list-group-item-light">Calendars</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                    *End of PART-9: Pagination*
+
+************************************************************************************************************************
+
+> Blueprint in flask
+To create a blueprint in Flask, you can use the Blueprint class, which is available in the flask module. Here's an
+example of how you might define a blueprint:
+
+from flask import Blueprint
+
+auth_bp = Blueprint('auth', __name__)
+
+@auth_bp.route('/login')
+def login():
+    # Handle login request
+    pass
+
+@auth_bp.route('/logout')
+def logout():
+    # Handle logout request
+    pass
+
+In this example, we are creating a blueprint called auth_bp and defining two routes for handling login and logout
+requests. The first argument to the Blueprint constructor is the name of the blueprint, and the second argument is the
+name of the module (in this case, __name__).
+
+from flask import Flask
+from auth import auth_bp
+
+app = Flask(__name__)
+app.register_blueprint(auth_bp)
+
+Here, we are registering the auth_bp blueprint with the app Flask instance. This will make the routes defined in the
+blueprint available at the URLs /auth/login and /auth/logout
+
