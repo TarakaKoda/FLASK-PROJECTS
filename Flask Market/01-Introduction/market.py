@@ -4,10 +4,10 @@ app = Flask(__name__)
 
 
 @app.route("/")
-@app.route("/home")
-def home_page():
-    return """<h1>Home Page</h1>
-    <p>Welcome to our Home Page</p>
+@app.route("/home/<username>")
+def home_page(username):
+    return f"""<h1>Home Page</h1>
+    <p>Welcome to our Home Page {username}</p>
     """
 
 @app.route("/about")
