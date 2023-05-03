@@ -57,7 +57,7 @@ def hello_world():
       return f"<h1>Home Page</h1>" \
              f"<h1>Welcome to our home page</h1>"
 
-- When a user navigates to http://localhost:5000/about, Flask will call the home_page() function and return the string
+- When a user navigates to http://localhost:5000, Flask will call the home_page() function and return the string
   <h1>Home Page</h1> \ <h1>Welcome to our home page</h1> as the response.
 
 
