@@ -494,6 +494,36 @@
                                          *End of PART-9: FLASK VALIDATIONS*
 
 ************************************************************************************************************************
+                                                                                                            04-05-2023
+                                   PART-10: FLASH MESSAGES AND ADVANCED VALIDATIONS
+                                                                                                             10:28:45PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is flash message in flask?
+  In Flask, you can use the flash function to display messages to the user. The flash function stores a message in a
+  cookie that will be sent to the browser, and then automatically deleted on the next request.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is ValidationError?
+  In Flask, ValidationError is an error that is raised when the input data provided by a user or client fails to pass
+  the validation rules defined for a form field.
+
+  For example, if a form field requires the input data to be a valid email address, but the user enters an invalid email
+  address, a ValidationError would be raised. This error can be caught and handled by the application to provide feedback
+  to the user about what went wrong and how to fix it.
+
+  In Flask, ValidationError is often used in conjunction with the wtforms library and its validation system. When a form
+  is submitted, wtforms automatically validates the input data against the validators specified for each form field. If
+  any of the validators fail, a ValidationError is raised and can be caught by the application.
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                *End of PART-10: FLASH MESSAGES AND ADVANCED VALIDATIONS*
+
+************************************************************************************************************************
+
 
 
 
