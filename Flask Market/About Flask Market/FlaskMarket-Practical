@@ -620,6 +620,106 @@ if __name__ == "__main__":
                                          *End of PART-5: MODELS AND DATABASE*
 
 ************************************************************************************************************************
+                                                                                                             04-05-2023
+                                          PART-6: PROJECT RESTRUCTURE
+                                                                                                             01:04:28PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+- restructured the project
+- created a new file called "run.py"
+- created a package called market
+  - created __init__.py it will make a directory into a package and this will executes when package is imported
+  - and moved everything into that package except for run.py, and instance: market.db(our database)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- after refactoring the project structure:
+
+- instance
+  - market.db
+- market (package)
+  - templates
+    - home.html
+    - market.html
+    - base.html
+  - __init__.py
+  - models.py
+  - routes.py
+- run.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+- run.py
+from market import app
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- market (package)
+ - templates
+   - home.html
+   - market.html
+   - base.html
+ - __init__.py
+ - models.py
+ - routes.py
+
+------------------------------------------------------------------------------------------------------------------------
+
+ - __init__.py
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+
+   app = Flask(__name__)
+   app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///market.db"
+   db = SQLAlchemy(app)
+
+   from market import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+ - models.py
+   from market import db
+
+   class Item(db.Model):
+       id = db.Column(db.Integer(), primary_key=True)
+       name =  db.Column(db.String(length=30), nullable=False, unique=True)
+       price = db.Column(db.Integer(), nullable=False)
+       barcode = db.Column(db.String(length=12), nullable=False, unique=True)
+       description = db.Column(db.String(length=1024), nullable=False, unique=True)
+
+       def __repr__(self):
+           return f"Item({self.name}, {self.price})"
+
+------------------------------------------------------------------------------------------------------------------------
+
+ - routes.py
+   from flask import render_template, url_for
+   from market.models import Item
+   from market import app
+
+
+
+   @app.route("/")
+   @app.route("/home")
+   def home_page():
+       return render_template("home.html", title="Home page")
+
+
+   @app.route("/market")
+   def market_page():
+       items = Item.query.all()
+       return render_template("market.html", items=items, title="Market Page")
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of PART-6: PROJECT RESTRUCTURE*
+
+************************************************************************************************************************
 
 
 
