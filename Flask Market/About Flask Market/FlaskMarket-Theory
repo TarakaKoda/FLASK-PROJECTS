@@ -374,6 +374,127 @@
                                          *End of PART-6: PROJECT RESTRUCTURE*
 
 ************************************************************************************************************************
+                                                                                                             04-05-2023
+                                          PART-7: MODEL RELATIONSHIPS
+                                                                                                             03:10:45PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is a foreign key?
+  A foreign key is a column or a set of columns in a database table that refers to the primary key of another table. It
+  is used to establish a relationship between two tables in a database.
+
+  The foreign key constraint ensures referential integrity in the database, meaning that it ensures that the data in the
+  tables remains consistent and accurate. This is because the foreign key constraint restricts the values that can be
+  inserted into the foreign key column to only those values that exist in the referenced table's primary key column.
+
+  For example, if we have two tables in a database, one for customers and one for orders, we can establish a relationship
+  between them by creating a foreign key on the "customer_id" column in the orders table that refers to the "id" column
+  in the customers table. This ensures that every order in the orders table is associated with a valid customer in the
+  customers table.
+
+  Foreign keys are a fundamental concept in relational databases and are used extensively to create complex relationships
+  between tables in a database.
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of PART-7: MODEL RELATIONSHIPS*
+
+************************************************************************************************************************
+                                                                                                             04-05-2023
+                                              PART-8: FLASK FORMS
+                                                                                                             06:02:50PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+> what are forms in flask?
+  In Flask, a "Form" is a way to represent the data submitted by the user via an HTML form. It is a collection of fields
+  that the user fills out and submits to the server for processing.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is wtf extension?
+  In order to work with forms in Flask, you typically use the Flask-WTF extension, which provides a simple way to define
+  and validate forms. This extension includes functionality for generating HTML forms, validating user input, and
+  handling form submission.
+
+  To use Flask-WTF, you first need to install it using pip. You can then define a form by creating a class that inherits
+  from the FlaskForm class provided by Flask-WTF. Inside the class, you can define the fields of the form using various
+  field classes such as StringField, IntegerField, BooleanField, etc.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> Why we need to put a secret key?
+  In Flask, the secret_key is used for securely signing session cookies and other security-related uses. The secret key
+  is a random string of bytes used to encrypt the session cookie data and protect it from tampering.
+
+  When a Flask application is created, it should have a secret key set, which is used to sign cookies and other data
+  that needs to be protected from tampering. Without a secret key, the data can be easily manipulated by attackers,
+  potentially causing security vulnerabilities in your application.
+
+  By setting a secret key, Flask can securely store session data, including the user's login credentials and other
+  sensitive information. This helps to prevent unauthorized access and improve the overall security of your application.
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of  PART-8: FLASK FORMS*
+
+************************************************************************************************************************
+                                                                                                             04-05-2023
+                                           PART-9: FLASK VALIDATIONS
+                                                                                                             08:45:10PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is validation in flsak?
+  In Flask, validation refers to the process of verifying whether the input data provided by a user or client is valid
+  according to certain rules or criteria. This is an important step in building secure and reliable web applications
+  because it helps to prevent errors, security vulnerabilities, and other issues that can arise from invalid input.
+
+  Flask provides several built-in tools and libraries for validation, including the WTForms library and Flask-Validate
+  extension. These tools allow developers to define custom validation rules and apply them to incoming data, such as
+  form submissions or API requests.
+
+  For example, a web application that allows users to sign up might use validation to ensure that the user's email
+  address is valid and unique, their password meets certain complexity requirements, and other fields are filled out
+  correctly. If any of the validation checks fail, the application can return an error message to the user and ask them
+  to correct the input.
+
+  Overall, validation is an important part of building robust and secure web applications, and Flask provides developers
+  with several tools to make this process easier and more efficient.
+
+------------------------------------------------------------------------------------------------------------------------
+
+- validators that are used in the project
+  The StringField, PasswordField, and SubmitField classes from the wtforms library, as well as several validator functions
+  from the wtforms.validators module.
+
+  StringField and PasswordField are classes that define form fields for inputting strings and passwords, respectively.
+  SubmitField is a class that defines a form field for submitting the form.
+
+  The imported validators are Length, EqualTo, Email, and DataRequired. These validators are used to define validation
+  rules for the input data.
+
+  Length validator is used to ensure that the input data has a minimum and/or maximum length.
+  EqualTo validator is used to ensure that the input data matches another field, such as a password confirmation field.
+  Email validator is used to ensure that the input data is a valid email address.
+  DataRequired validator is used to ensure that the input data is not empty.
+  These validators can be applied to form fields by passing them as arguments to the field's constructor or using them as decorators.
+
+------------------------------------------------------------------------------------------------------------------------
+
+> What is redirect in flask?
+  In Flask, a redirect is a way to send the client's browser to a different URL. This is often used when a user submits
+  a form or performs some action that requires a different view or page to be shown.
+  The redirect() function in Flask returns an HTTP response that instructs the browser to request a different URL.
+  For example, if you want to redirect the user to the homepage of your site after they have successfully logged in
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of PART-9: FLASK VALIDATIONS*
+
+************************************************************************************************************************
+
 
 
 

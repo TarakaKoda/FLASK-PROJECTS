@@ -720,6 +720,309 @@ if __name__ == "__main__":
                                          *End of PART-6: PROJECT RESTRUCTURE*
 
 ************************************************************************************************************************
+                                                                                                             04-05-2023
+                                          PART-7: MODEL RELATIONSHIPS
+                                                                                                             03:10:45PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+- create a new User model and create relationship with Item
+- model.py
+
+    from market import db
+
+    class User(db.Model):
+        id = db.Column(db.Integer(), primary_key=True)
+        username = db.Column(db.String(length=30), nullable=False, unique=True)
+        email_address = db.Column(db.String(length=50), nullable=False, unique=True)
+        password_hash = db.Column(db.String(length=60), nullable=False)
+        budget = db.Column(db.Integer(), nullable=False, default=1000)
+        items = db.relationship('Item', backref='owned_user', lazy=True)
+
+    class Item(db.Model):
+        id = db.Column(db.Integer(), primary_key=True)
+        name = db.Column(db.String(length=30), nullable=False, unique=True)
+        price = db.Column(db.Integer(), nullable=False)
+        barcode = db.Column(db.String(length=12), nullable=False, unique=True)
+        description = db.Column(db.String(length=1024), nullable=False, unique=True)
+        owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
+
+
+        def __repr__(self):
+            return f'Item {self.name}'
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now we can perform queries in the terminal to check if the relation is working or not
+- open terminal
+>>> python
+>>> from market import app, db
+>>> app.app_context().push()
+>>> from market.models import Item, User
+>>> u1 = User(username="jsc", password_hash="12345665", email_address="jsc@gmail.com")
+>>> db.session.add(u1)
+>>> db.session.commit()
+>>> User.query.all()
+[<User 1>]
+>>> i1 = Item(name="Iphone 10", price=80000, barcode="233654879899", description="description1")
+>>> i2 = Item(name="Iphone 11", price=90000, barcode="233625654199", description="description2")
+>>> db.session.add(i1)
+>>> db.session.add(i2)
+>>> db.session.commit()
+>>> Item.query.all()
+[Item Iphone 10, Item Iphone 11]
+>>> item1 = Item.query.filter_by(name="Iphone 10").first()
+>>> item1
+Item Iphone 10
+>>> item1.owner
+>>> item1.owner = User.query.filter_by(name="jsc").first().id
+>>> db.session.add(item1)
+>>> db.session.commit()
+>>> item1.owner
+1
+>>> i = Item.query.filter_by(name="Iphone 10").first()
+>>> i.owned_user
+<user 1>
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of PART-7: MODEL RELATIONSHIPS*
+
+************************************************************************************************************************
+                                                                                                             04-05-2023
+                                              PART-8: FLASK FORMS
+                                                                                                             06:02:50PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+- pipenv install flask-wtf
+- pipenv install wtforms
+
+- create a forms.py in the market package
+- create a RegisterForm using wtforms
+- create app.config["SECRET_KEY"] = "generate an secret key using os package"
+- now create a new register route and render_template register.html
+- create register.html template in templates
+
+------------------------------------------------------------------------------------------------------------------------
+
+- forms.py
+    from flask_wtf import FlaskForm
+    from wtforms import StringField, PasswordField, SubmitField
+
+    class RegisterForm(FlaskForm):
+        username = StringField(label="User Name")
+        email_address = StringField(label="Email Address")
+        password1 = PasswordField(label="Password")
+        password2 = PasswordField(label="Confirm Password")
+        submit = SubmitField(label="Create Account")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- routes.py
+- create a new route "register_page"
+  from flask import render_template, url_for
+from market.models import Item
+from market import app
+from market.forms import RegisterForm
+
+
+@app.route("/")
+@app.route("/home")
+def home_page():
+    return render_template("home.html", title="Home page")
+
+
+@app.route("/market")
+def market_page():
+    items = Item.query.all()
+    return render_template("market.html", items=items, title="Market Page")
+
+
+@app.route("/register")
+def register_page():
+    form = RegisterForm()
+    return render_template("register.html", form=form, title="Register Page")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- __init__.py
+    from flask import Flask
+    from flask_sqlalchemy import SQLAlchemy
+
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///market.db"
+    app.config["SECRET_KEY"] = "e88f4c0d5e3eb689ced253da"
+    db = SQLAlchemy(app)
+
+    from market import routes
+
+------------------------------------------------------------------------------------------------------------------------
+
+- register.html
+  {% extends 'base.html' %}
+{% block title %}
+Register Page
+{% endblock %}
+
+{% block content %}
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-register" style="color:white">
+            <img class="mb-4" src="https://lh3.googleusercontent.com/snGiXJ8yKmJCeG0ylz8U9Z5U1rXfbNN0qc_Zd2En4yuQVUJieZLNIrYOy12-KgEbwQ2hva7_A6NkGJTXZDr8diPu4zxF2ZpRmMhZ0DwT_YM1wvakapi9MMnRrIUfzjpNa_SJpxUac_y0k66xAI71JqeMx-P2_Q2hIPRK5F1vxYjJd5jGVq80C0TPfMkLzy30J4eMaDH_trM_BW26PFpIOmlRGvBUkytWaLdPr_3HV7e6RUoYMXFQwbVPT9A8u4-elLLftj7wpWpG27L9l9YvKSdLzINByBUn6fnuOUbvyKcbG6AmUyL8tvKugniS8fbiIMC4NqMi9IX73ercCDZ9xemq4ZBr2FuOunOcOu1BJDb_4HR9GISdsaUaCgMv8l6ekSiVfWWwmqa-UvcCtUJHIDF6s-lsaHE3wf27-Qm7Tj4CMKctMC-gyNQMyWv6jytm7_vzqPa15hfZQasHsgfBT9C08z9alDBwykvm5yXCicFTAcr_qkvJRUkyPgAN1VrbfXsZIx4g_FwReu0Q-WBP9FD8FLWuSNOTC6ccr-CwP_Cmn2AjYoc-tIt477tdF-DGUODYEivZ4a94mYPgCRpNVDjnkDLbxW1GFnmlW5LIJ-wvGZY5HaMOoZgttdjrJyxOddNj_1oTA2tyB2mCmr0hMMG8sf2b_v2lSv6k-0WVrvHScJb_9PbgaDXkCJWuoAo10EmzpipumhpeaoRFSNXGYmoqZYQF1xYUMgZyDz2BmIThTEBsooQYe1H4nSjJ7OO7dtMwVzUtHLjZTXv6s2P-b6t6-f9uTY7B-hB2hfMGAvIJoAKd9zYNkTxxgcnBhQdj005Mrycsb_p_RAzYFNG-9_GA1HlqV7SZhcGjGHujp8_aKVV9XMk-vLUOjwa5Q0MDgJUTs20KQAtPiZa_bS-mlY6SmfvEH2g80t6e=w250-h250-s-no?authuser=0" alt="">
+            <h1 class="h3 mb-3 font-weight-normal">
+                Please Create your Account
+            </h1>
+            <br>
+            {{ form.username.label() }}
+            {{ form.username(class="form-control", placeholder="User Name") }}
+
+            {{ form.email_address.label() }}
+            {{ form.email_address(class="form-control", placeholder="Email Address") }}
+
+            {{ form.password1.label() }}
+            {{ form.password1(class="form-control", placeholder="Password") }}
+
+            {{ form.password2.label() }}
+            {{ form.password2(class="form-control", placeholder="Confirm Password") }}
+
+            <br>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+
+        </form>
+    </div>
+</body>
+{% endblock %}
+
+------------------------------------------------------------------------------------------------------------------------
+
+- base.html
+- add link to the Register page using url_for("register_page") int the navigation bar
+  <!doctype html>
+<html lang="en">
+   <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+      <title>{{ title }}</title>
+   </head>
+   <body>
+      <!-- Navbar here -->
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+          <a class="navbar-brand" href="#">Taraka's Market &#x1F6D2</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('home_page') }}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('market_page') }}">Market</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('register_page') }}">Register</a>
+                </li>
+            </ul>
+          </div>
+      </nav>
+      <!-- Future Content here -->
+         {% block content %}
+
+         {% endblock content %}
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+   </body>
+   <style>
+      body {
+      background-color: #212121;
+      color: white
+      }
+   </style>
+</html>
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of  PART-8: FLASK FORMS*
+
+************************************************************************************************************************
+                                                                                                             04-05-2023
+                                           PART-9: FLASK VALIDATIONS
+                                                                                                             08:45:10PM
+
+------------------------------------------------------------------------------------------------------------------------
+
+- add validations to the forms
+- forms.py
+    from flask_wtf import FlaskForm
+    from wtforms import StringField, PasswordField, SubmitField
+    from wtforms.validators import Length, EqualTo, Email, DataRequired
+
+    class RegisterForm(FlaskForm):
+        username = StringField(label="User Name", validators=[Length(min=2,max=30), DataRequired()])
+        email_address = StringField(label="Email Address", validators=[Email(), DataRequired()])
+        password1 = PasswordField(label="Password", validators=[Length(min=6), DataRequired()])
+        password2 = PasswordField(label="Confirm Password", validators=[EqualTo("password1"), DataRequired()])
+        submit = SubmitField(label="Create Account")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- now setup database to the register route
+- routes.py
+    from flask import render_template, url_for, redirect
+    from market.models import Item, User
+    from market import app
+    from market.forms import RegisterForm
+    from market import db
+
+    @app.route("/")
+    @app.route("/home")
+    def home_page():
+        return render_template("home.html", title="Home page")
+
+
+    @app.route("/market")
+    def market_page():
+        items = Item.query.all()
+        return render_template("market.html", items=items, title="Market Page")
+
+
+    @app.route("/register", methods=["GET","POST"])
+    def register_page():
+        form = RegisterForm()
+        if form.validate_on_submit():
+            user_to_create = User(username=form.username.data, email_address=form.email_address.data, password_hash=form.password1.data)
+            db.session.add(user_to_create)
+            db.session.commit()
+            return redirect(url_for("market_page"))
+        if form.errors != {}: # if there are not error from the validations
+            for err_mgs in form.errors.values():
+                print(f"There was an error with creating a user: {err_mgs}")
+        return render_template("register.html", form=form, title="Register Page")
+
+------------------------------------------------------------------------------------------------------------------------
+
+- add {{ form.hidden_tag() }} under <form method="POST" class="form-register" style="color:white">
+- this will protect us from the hackers to steal our data while registering
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of PART-9: FLASK VALIDATIONS*
+
+************************************************************************************************************************
 
 
 
