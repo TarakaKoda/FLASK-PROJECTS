@@ -490,6 +490,137 @@ if __name__ == "__main__":
                                          *End of PART-4: TEMPLATE INHERITANCE*
 
 ************************************************************************************************************************
+                                                                                                             04-05-2023
+                                          PART-5: MODELS AND DATABASE
+                                                                                                             10:54:36AM
+
+------------------------------------------------------------------------------------------------------------------------
+
+- for siting a database to the project we need to install a package called sqlalchemy
+- open terminal
+  - pipenv install flask-sqlalchemy
+
+- after that import that package in the market.py
+  - from flask_sqlalchemy import SQLAlchemy
+
+- now create an instance as "db" and pass the app as an augment to SQLAlchemy
+  - db = SQLAlchemy(app)
+
+- now we need to create model(table) using the instance of the SQLAlchemy(db)
+- we can create mode using classes
+  - create a class Item
+
+- now we need to config app with a database uri(uniform resource identifier) in the market.py
+- open terminal and create a database
+
+------------------------------------------------------------------------------------------------------------------------
+
+market.py
+from flask import Flask, render_template, url_for
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///market.db"
+db = SQLAlchemy(app)
+
+
+class Item(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name =  db.Column(db.String(length=30), nullable=False, unique=True)
+    price = db.Column(db.Integer(), nullable=False)
+    barcode = db.Column(db.String(length=12), nullable=False, unique=True)
+    description = db.Column(db.String(length=1024), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"Item({self.name}, {self.price})"
+
+
+@app.route("/")
+@app.route("/home")
+def home_page():
+    return render_template("home.html", title="Home page")
+
+
+@app.route("/market")
+def market_page():
+    items = Item.query.all()
+    return render_template("market.html", items=items, title="Market Page")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+------------------------------------------------------------------------------------------------------------------------
+
+- terminal commands
+>>> from market import app, db
+>>> app.app_context().push()
+>>> db.create_all()
+
+- this will create a directory(instance) in the current project in that market.db(database) will be created
+
+- now we can import Item class from the market and create instances of that class which will be stored in this databse
+- open terminal
+>>> from market import Item
+>>> item1 = Item(name="IPhone 10", price=75000, barcode="245321256578922", description="this is new IPhone 10 in the market")
+>>> item2 = Item(name="IPhone 11", price=80000, barcode="235179985456654", description="this is new IPhone 11 in the market")
+
+- now how can we add these into our database
+>>> db.session.add(item1)
+>>> db.session.add(item2)
+>>> db.session.commit()
+
+- this will create new table in our database
+>>> Item.query.all()
+[<Item 1>, <Item 2>]
+
+- this is hard to read, to make this more readable we can define a method called __repr__ in Item class
+- to check if its working, we need to re-run the app in the terminal
+
+>>> from market import app, db
+>>> app.app_context().push()
+
+>>> from market import Item
+>>> Item.query.all()
+[Item(IPhone 10, 75000), Item(IPhone 11, 80000)]
+
+- we can perform actions by iterating Item
+
+>>> for item in Item.query.all():
+        item.name
+        item.price
+        item.barcode
+        item.description
+
+'IPhone 10'
+75000
+'245321256578922'
+'this is new IPhone 10 in the market'
+'IPhone 11'
+80000
+'235179985456654'
+'this is new IPhone 11 in the market'
+
+- we can filter the items using filter_by
+>>> for item in Item.query.filter_by(price=80000)
+        item.name
+        item.price
+        item.barcode
+        item.description
+
+'IPhone 11'
+80000
+'235179985456654'
+'this is new IPhone 11 in the market'
+
+- now in market.py change the items = Item.query.all()
+
+------------------------------------------------------------------------------------------------------------------------
+
+                                         *End of PART-5: MODELS AND DATABASE*
+
+************************************************************************************************************************
+
 
 
 
